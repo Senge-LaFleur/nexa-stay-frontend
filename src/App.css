@@ -1,42 +1,98 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root{
+    --black: #111;
+    --grey: #555;
+    --white: #fff;
+    --blue: #130351;
+    --green: #084846;
+    --light-green: #6ba4a2;
+    --yellow: #fbd650;
+    --orange: #f4af26;
+    --box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    --max-width: 1200px;
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.body{
+    font-family: "Poppins", sans-serif;
+    scroll-behavior: smooth;
+}
+
+.section-container{
+    margin: auto;
+    padding: 5rem 1rem;
+}
+
+.section-subheader{
+    margin-bottom: .5rem;
+    position: relative;
+    font-size: 25px;
+    font-weight: 500;
+    letter-spacing: 2px;
+}
+
+.section-subheader::after{
+    position: absolute;
+    content: "";
+    top: 50%;
+    transform: translate(1rem, -50%);
+    height: 2px;
+    width: 4rem;
+    background-color: var(--orange);
+}
+
+.section-header{
+    max-width: 800px;
+    margin-bottom: 1rem;
+    font-size: 2.5rem;
+    font-weight: 600;
+    line-height: 3rem;
+}
+
+.section-description{
+  max-width: 800px;
+  margin-bottom: 1rem;
+  color: var(--white);
+}
+
+.btn{
+  padding: .75rem 1.5rem;
+  /* display: inline-block; */
+  width: 180px;
   text-align: center;
+  outline: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--black);
+  background-color: var(--orange);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.btn:hover{
+  background-color: var(--yellow);
+  letter-spacing: .1rem;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+img{
+  width: 100%;
+  display: flex;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+a{
+  text-decoration: none;
 }
 
-.card {
-  padding: 2em;
+.logo{
+  max-width: 120px;
+  color: var(--white);
 }
 
-.read-the-docs {
-  color: #888;
-}

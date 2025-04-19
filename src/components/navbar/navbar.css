@@ -1,0 +1,132 @@
+:root{
+    --black: #111;
+    --grey: #555;
+    --white: #fff;
+    --blue: #130351;
+    --green: #084846;
+    --light-green: #6ba4a2;
+    --yellow: #fbd650;
+    --orange: #f4af26;
+    --box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    --max-width: 1200px;
+}
+
+nav{
+    position: fixed;
+    isolation: isolate;
+    top: 0%;
+    width: 100%;
+    max-width: var(--max-width);
+    margin: auto;
+    z-index: 9;
+}
+
+.navbar{
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    background-color: var(--green);
+}
+
+.logo h3{
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.logo h3 span{
+    color: var(--orange);
+}
+
+.menu-bar{
+    font-size: 1.5rem;
+    color: var(--white);
+    cursor: pointer;
+}
+
+.nav-links{
+    list-style: none;
+    position: absolute;
+    width: 100%;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 2rem;
+    background-color: rgba(9, 59, 54, 0.9);
+    transform: translateY(-100%);
+    transition: 0.5s;
+    z-index: -1;
+}
+
+.nav-links.open {
+    transform: translateY(0);
+}
+
+.nav-links a{
+    position: relative;
+    isolation: isolate;
+    padding-bottom: 8px;
+    color: var(--white);
+    transition: 0.3s;
+}
+
+.nav-btn{
+    display: none;
+}
+
+
+
+@media (width > 768px){
+    nav{
+        padding: 2rem 1rem;
+        position: static;
+        display: flex;
+        align-items: center;
+        justify-content: space-between
+    }
+
+    .navbar{
+        padding: 0;
+        background-color: transparent;
+    }
+
+    .menu-bar{
+        display: none;
+    }
+
+    .nav-links{
+        padding: 0;
+        width: unset;
+        position: static;
+        transform: none;
+        flex-direction: row;
+        background-color: transparent;
+    }
+
+    .nav-btn {
+        display: block;
+    }
+
+    .nav-links a{
+        font-weight: 500;
+    }
+
+    .nav-links a::after{
+        position: absolute;
+        content: "";
+        left: 0;
+        bottom: 0;
+        height: 2px;
+        width: 0;
+        background-color: var(--orange);
+        transition: 0.2s;
+        transform-origin: left;
+    }
+
+    .nav-links a:hover::after{
+        width: 100%;
+    }
+}
+

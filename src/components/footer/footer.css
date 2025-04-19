@@ -1,0 +1,116 @@
+:root{
+    --black: #111;
+    --grey: #555;
+    --white: #fff;
+    --blue: #130351;
+    --green: #084846;
+    --light-green: #6ba4a2;
+    --yellow: #fbd650;
+    --orange: #f4af26;
+    --box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    --max-width: 1200px;
+}
+
+.footer{
+    background-color: var(--green);
+}
+
+.footer-container{
+    display: grid;
+    gap: 4rem 2rem;
+}
+
+.logo a{
+    display: flex;
+    color: var(--white);
+}
+
+.logo a span{
+    color: var(--orange);
+    font-size: 1.4rem;
+}
+
+.logo a:hover{
+    color: var(--orange);
+}
+
+.footer-col .section-description{
+    margin-block: 1rem;
+}
+
+.footer-col h4{
+    margin-bottom: 2rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--white);
+}
+
+.footer-links{
+    list-style: none;
+    display: grid;
+    gap: 1rem;
+}
+
+.footer-links a{
+    color: #aaa;
+    transition: 0.3s;
+}
+
+.footer-links a:hover{
+    color: var(--orange);
+}
+
+.footer-socials{
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.footer-socials a{
+    font-size: 25px;
+    color: var(--white);
+    max-width: 25px;
+    transition: 0.3s;
+}
+
+.footer-socials .fa-facebook-f:hover{
+    color: #5e3ee1;
+}
+.footer-socials .fa-instagram:hover{
+    color: #f148ab;
+}
+.footer-socials .fa-twitter:hover{
+    color: #62bffa;
+}
+.footer-socials .fa-youtube:hover{
+    color: #f02533;
+}
+
+.footer-bar{
+    text-align: center;
+    padding: 1rem;
+    font-size: .9rem;
+    color: #ccc;
+}
+
+.footer-bar span{
+    color: var(--orange);
+}
+
+
+
+
+@media (width > 576px){
+    .footer-container{
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (width > 768px){
+    .footer-container{
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+

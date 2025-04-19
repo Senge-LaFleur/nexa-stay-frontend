@@ -1,0 +1,57 @@
+:root{
+    --black: #111;
+    --grey: #555;
+    --white: #fff;
+    --blue: #130351;
+    --green: #084846;
+    --light-green: #6ba4a2;
+    --yellow: #fbd650;
+    --orange: #f4af26;
+    --box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    --max-width: 1200px;
+}
+
+.header{
+    background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('../../assets/images/lobby1.jpg');
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 80vh;
+}
+
+.header-container{
+    text-align: center;
+}
+
+.header-container p{
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    color: var(--white);
+}
+
+.header-container h1{
+    margin-bottom: 2rem;
+    font-size: 4rem;
+    font-weight: 500;
+    line-height: 4.5rem;
+    color: var(--white);
+}
+
+.header-container h1 span{
+    color: var(--orange);
+}
+
+.header-container .book-link{
+    color: var(--white);
+    font-size: 1.6rem;
+    font-weight: 400;
+}
+
+.header-container .book-link .fa-arrow-right{
+    color: var(--orange);
+}
+
+.header-container .book-link:hover{
+    letter-spacing: .1rem;
+}
+

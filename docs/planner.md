@@ -16,7 +16,7 @@
 
 
 2. Pour cette semaine
-    - Page vitrine
+    - Page vitrine (done)
     - Authentification
     - Page des Salles
 
