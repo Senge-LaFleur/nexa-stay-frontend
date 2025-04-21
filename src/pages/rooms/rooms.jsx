@@ -5,6 +5,8 @@ import room1 from '../../assets/images/bedroom1.jpg'
 import room2 from '../../assets/images/bedroom2.jpg'
 import room3 from '../../assets/images/bedroom3.jpg'
 import room4 from '../../assets/images/bedroom4.jpg'
+import room5 from '../../assets/images/bedroom5.jpg'
+import room6 from '../../assets/images/bedroom6.jpg'
 import './rooms.css'
 
 function Rooms() {
@@ -116,7 +118,7 @@ function Rooms() {
                     </div>
                     <div class="room-card">
                         <div class="room-card-image">
-                            <img src={room4} alt="room" />
+                            <img src={room5} alt="room" />
                         </div>
                         <div class="room-card-details">
                             <h4>Deluxe Ocean View</h4>
@@ -129,7 +131,7 @@ function Rooms() {
                     </div>
                     <div class="room-card">
                         <div class="room-card-image">
-                            <img src={room1} alt="room" />
+                            <img src={room6} alt="room" />
                         </div>
                         <div class="room-card-details">
                             <h4>Executive Cityscape Room</h4>
