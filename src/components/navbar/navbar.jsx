@@ -20,7 +20,7 @@ function navbar(){
             <nav>
                 <div class="navbar">
                     <div class="logo">
-                        <h3><span>Nexa</span>Stay</h3>
+                        <h3><span>Nexa</span> Stay</h3>
                     </div>
                     <div class="menu-bar" id="menu-bar" onClick={toggleMenu}>
                         <FontAwesomeIcon icon={isOpen ? ['fas', 'fa-times'] : ['fas', 'fa-bars']} />
