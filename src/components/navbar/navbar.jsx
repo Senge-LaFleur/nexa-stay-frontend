@@ -32,7 +32,7 @@ function navbar(){
                     {/* <li><Link to="/services">Services</Link></li> */}
                     <li><Link to="/gallery">Gallery</Link></li>
                 </ul>
-                <Link to="/rooms" class="btn nav-btn">Book Now</Link>
+                <Link to="/rooms" class="btn nav-btn">Sign In</Link>
             </nav>    
             
         </div>
