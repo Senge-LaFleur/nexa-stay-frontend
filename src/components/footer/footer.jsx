@@ -11,7 +11,7 @@ function footer(){
                     <div class="footer-col">
                         <div class="logo">
                             <a href="#home">
-                                <span><FontAwesomeIcon icon={['fas', 'fa-home']} /></span><h4>NexaStay</h4>
+                                <span><FontAwesomeIcon icon={['fas', 'fa-hotel']} /></span><h4>NexaStay</h4>
                             </a>
                         </div>
                         <p class="section-description">

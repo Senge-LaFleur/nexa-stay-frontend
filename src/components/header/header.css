@@ -12,13 +12,12 @@
 }
 
 .header{
-    background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('../../assets/images/lobby1.jpg');
+    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('../../assets/images/lobby1.jpg');
     background-position: center center;
     background-size: cover;
     background-repeat: no-repeat;
     height: 80vh;
 }
-
 .header-container{
     text-align: center;
 }
@@ -45,6 +44,7 @@
     color: var(--white);
     font-size: 1.6rem;
     font-weight: 400;
+    transition: 0.3s;
 }
 
 .header-container .book-link .fa-arrow-right{

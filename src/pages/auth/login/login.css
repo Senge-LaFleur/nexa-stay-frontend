@@ -1,0 +1,103 @@
+:root{
+    --black: #111;
+    --grey: #555;
+    --white: #fff;
+    --green: #084846;
+    --light-green: #6ba4a2;
+    --yellow: #fbd650;
+    --orange: #f4af26;
+    --box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    --max-width: 1200px;
+}
+
+.login-form-container{
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 10000;
+    min-height: 100vh;
+    width: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-form-container form{
+    margin: 2rem;
+    padding: 1.5rem 2rem;
+    border-radius: .5rem;
+    background-color: var(--white);
+    width: 50rem;
+}
+
+.login-form-container form :is(.section-header){
+    text-align: center;
+    margin-inline: auto;
+}
+
+.login-content{
+    display: grid;
+    gap: 1rem;
+    padding-top: 2rem;
+}
+
+.login-content .box-container{
+    display: flex;
+    gap: .5rem;
+}
+
+.login-content .box-container span{
+    font-size: 1.5rem;
+    color: var(--green);
+}
+
+.login-content .box-container .box{
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.2rem;
+    color: var(--black);
+    margin: .6rem 0;
+    border: 1px solid var(--grey);
+    border-radius: .5rem;
+    text-transform: none;
+}
+
+.login-content .box-container .box:focus{
+    outline: none;
+    border: 2px solid var(--green);
+}
+
+.login-content .buttons{
+    display: grid;
+    gap: 1rem;
+}
+
+.login-content .buttons .btn{
+    width: 100%;
+}
+
+.login-content .form-links{
+    display: flex;
+    justify-content: space-between;
+}
+
+.login-content .form-links .link{
+    text-decoration: none;
+}
+
+.login-content .form-links p{
+    padding: .5rem 0;
+    font-size: .8rem;
+    color: var(--grey);
+}
+
+.login-content .form-links p span{
+    color: var(--light-green);
+}
+
+.login-content .form-links p span:hover{
+    text-decoration: underline;
+}
+
+
+
