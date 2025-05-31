@@ -74,9 +74,10 @@ function Rooms() {
                         </select>
                         <select id="price" name="options">
                             <option value="default">-- Price Range --</option>
-                            <option value="standard">under $199</option>
+                            <option value="standard">Under $199</option>
                             <option value="deluxe">$199 - $299</option>
                             <option value="vip">$299 - $399</option>
+                            <option value="vip">Over $399</option>
                         </select>
                         <select id="beds" name="options">
                             <option value="default">-- Number of Beds --</option>

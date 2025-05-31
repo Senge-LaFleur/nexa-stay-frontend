@@ -71,6 +71,7 @@ function Reservation() {
                             <thead>
                                 <tr>
                                     <th>User</th>
+                                    <th>Reserved On</th>
                                     <th>Check In</th>
                                     <th>Check Out</th>
                                     <th>Guests</th>
@@ -85,15 +86,6 @@ function Reservation() {
                                     </td>
                                     <td>01-10-2021</td>
                                     <td>01-10-2021</td>
-                                    <td>0</td>
-                                    <td>0</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <img src={profile1} alt="" />
-                                        <p>John Doe</p>
-                                    </td>
-                                    <td>01-10-2021</td>
                                     <td>01-10-2021</td>
                                     <td>0</td>
                                     <td>0</td>
@@ -105,6 +97,7 @@ function Reservation() {
                                     </td>
                                     <td>01-10-2021</td>
                                     <td>01-10-2021</td>
+                                    <td>01-10-2021</td>
                                     <td>0</td>
                                     <td>0</td>
                                 </tr>
@@ -115,6 +108,7 @@ function Reservation() {
                                     </td>
                                     <td>01-10-2021</td>
                                     <td>01-10-2021</td>
+                                    <td>01-10-2021</td>
                                     <td>0</td>
                                     <td>0</td>
                                 </tr>
@@ -123,6 +117,18 @@ function Reservation() {
                                         <img src={profile1} alt="" />
                                         <p>John Doe</p>
                                     </td>
+                                    <td>01-10-2021</td>
+                                    <td>01-10-2021</td>
+                                    <td>01-10-2021</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <img src={profile1} alt="" />
+                                        <p>John Doe</p>
+                                    </td>
+                                    <td>01-10-2021</td>
                                     <td>01-10-2021</td>
                                     <td>01-10-2021</td>
                                     <td>0</td>
