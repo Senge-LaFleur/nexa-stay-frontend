@@ -4,9 +4,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Sidebar from '../../components/sidebar/sidebar.jsx'
 import Navbar2 from '../../components/navbar2/navbar2.jsx';
 import profile1 from '../../assets/images/profile1.jpg'
-import './dashboard.css'
+import './payments.css'
 
-function Dashboard() {
+function Payments() {
     const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -27,7 +27,7 @@ function Dashboard() {
     }, []);
 
   return (
-    <div class="dashboard" id="content">
+    <div class="payments" id="payments">
 
 
         {/* ------------------------------ SIDEBAR ------------------------------- */}
@@ -53,41 +53,17 @@ function Dashboard() {
 
                 <Navbar2 />
 
-                <h2 class="section-header">Dashboard</h2>
+                <h2 class="section-header">Payments</h2>
 
                 <div class="date">
                     <input type="date" />
                 </div>
 
-                <ul class="box-info">
-                    <li>
-                        <span class="icon"><FontAwesomeIcon icon={['fas','fa-calendar-check']} /></span>
-                        <span class="text">
-                            <h3>1020</h3>
-                            <p>New Orders</p>
-                        </span>
-                    </li>
-                    <li>
-                        <span class="icon"><FontAwesomeIcon icon={['fas','fa-users']} /></span>
-                        <span class="text">
-                            <h3>2834</h3>
-                            <p>Visitors</p>
-                        </span>
-                    </li>
-                    <li>
-                        <span class="icon"><FontAwesomeIcon icon={['fas','fa-dollar-sign']} /></span>
-                        <span class="text">
-                            <h3>$2543</h3>
-                            <p>Total Sales</p>
-                        </span>
-                    </li>
-                </ul>
-
 
                 <div class="table-data">
                     <div class="order">
                         <div class="head">
-                            <h3>Recent Reservation Requests</h3>
+                            <h3>Booking Payments</h3>
                             <span><FontAwesomeIcon icon={['fas','fa-search']} /></span>
                             <span><FontAwesomeIcon icon={['fas','fa-filter']} /></span>
                         </div>
@@ -95,9 +71,9 @@ function Dashboard() {
                             <thead>
                                 <tr>
                                     <th>User</th>
-                                    <th>Check In</th>
-                                    <th>Check Out</th>
-                                    <th>Status</th>
+                                    <th>Amount</th>
+                                    <th>Paid On</th>
+                                    <th>Rooms</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -106,78 +82,50 @@ function Dashboard() {
                                         <img src={profile1} alt="" />
                                         <p>John Doe</p>
                                     </td>
+                                    <td>$499</td>
                                     <td>01-10-2021</td>
-                                    <td>01-10-2021</td>
-                                    <td><span class="status completed">Accepted</span></td>
+                                    <td>0</td>
                                 </tr>
                                 <tr>
                                     <td>
                                         <img src={profile1} alt="" />
                                         <p>John Doe</p>
                                     </td>
+                                    <td>$499</td>
                                     <td>01-10-2021</td>
-                                    <td>01-10-2021</td>
-                                    <td><span class="status pending">Pending</span></td>
+                                    <td>0</td>
                                 </tr>
                                 <tr>
                                     <td>
                                         <img src={profile1} alt="" />
                                         <p>John Doe</p>
                                     </td>
+                                    <td>$499</td>
                                     <td>01-10-2021</td>
-                                    <td>01-10-2021</td>
-                                    <td><span class="status process">Process</span></td>
+                                    <td>0</td>
                                 </tr>
                                 <tr>
                                     <td>
                                         <img src={profile1} alt="" />
                                         <p>John Doe</p>
                                     </td>
+                                    <td>$499</td>
                                     <td>01-10-2021</td>
-                                    <td>01-10-2021</td>
-                                    <td><span class="status pending">Pending</span></td>
+                                    <td>0</td>
                                 </tr>
                                 <tr>
                                     <td>
                                         <img src={profile1} alt="" />
                                         <p>John Doe</p>
                                     </td>
+                                    <td>$499</td>
                                     <td>01-10-2021</td>
-                                    <td>01-10-2021</td>
-                                    <td><span class="status completed">Accepted</span></td>
+                                    <td>0</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="todo">
-                        <div class="head">
-                            <h3>Todos</h3>
-                            <span><FontAwesomeIcon icon={['fas','fa-plus']} /></span>
-                            <span><FontAwesomeIcon icon={['fas','fa-filter']} /></span>
-                        </div>
-                        <ul class="todo-list">
-                            <li class="completed">
-                                <p>Todo List</p>
-                                <span><FontAwesomeIcon icon={['fas','fa-ellipsis-v']} /></span>
-                            </li>
-                            <li class="completed">
-                                <p>Todo List</p>
-                                <span><FontAwesomeIcon icon={['fas','fa-ellipsis-v']} /></span>
-                            </li>
-                            <li class="not-completed">
-                                <p>Todo List</p>
-                                <span><FontAwesomeIcon icon={['fas','fa-ellipsis-v']} /></span>
-                            </li>
-                            <li class="completed">
-                                <p>Todo List</p>
-                                <span><FontAwesomeIcon icon={['fas','fa-ellipsis-v']} /></span>
-                            </li>
-                            <li class="not-completed">
-                                <p>Todo List</p>
-                                <span><FontAwesomeIcon icon={['fas','fa-ellipsis-v']} /></span>
-                            </li>
-                        </ul>
-                    </div>
+                    
                 </div>
 
             </main>
@@ -186,4 +134,4 @@ function Dashboard() {
   )
 }
 
-export default Dashboard;
+export default Payments;

@@ -47,7 +47,7 @@ function Rooms() {
                     <div class="input-group input-btn">
                         <button class="btn">CHECK OUT</button>
                     </div>
-                </form>
+                </form>                
             </section>
 
             <section class="section-container room-container" id="room">
@@ -61,6 +61,30 @@ function Rooms() {
                         All rooms come with pillow-top mattresses, flat-screen TVs, ergonomic workspaces, 
                         and handicap-accessible options are available.
                     </p>
+                </div>
+
+                <div>
+                    <label for="options">Filter for a Better Selection</label>
+                    <div>
+                        <select id="type" name="options">
+                            <option value="default">-- Room Type --</option>
+                            <option value="standard">Standard</option>
+                            <option value="deluxe">Deluxe</option>
+                            <option value="vip">VIP</option>
+                        </select>
+                        <select id="price" name="options">
+                            <option value="default">-- Price Range --</option>
+                            <option value="standard">under $199</option>
+                            <option value="deluxe">$199 - $299</option>
+                            <option value="vip">$299 - $399</option>
+                        </select>
+                        <select id="beds" name="options">
+                            <option value="default">-- Number of Beds --</option>
+                            <option value="standard">1 Bed</option>
+                            <option value="deluxe">2 Beds</option>
+                        </select>
+                    </div>
+                
                 </div>
                 
                 <div class="room-grid">

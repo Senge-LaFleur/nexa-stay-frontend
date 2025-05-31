@@ -11,15 +11,15 @@ const Signup = () => {
                 <div class="client-content">
                     <div class="box-container">
                         <span><FontAwesomeIcon icon={['fas', 'fa-user']} /></span>
-                        <input type="text" class="box" placeholder="Enter a Username" />
+                        <input type="text" class="box" placeholder="Enter a Username" minlength="8" required />
                     </div>
                     <div class="box-container">
                         <span><FontAwesomeIcon icon={['fas', 'fa-envelope']} /></span>
-                        <input type="email" class="box" placeholder="Enter your Email" />
+                        <input type="email" class="box" placeholder="Enter your Email" required />
                     </div>
                     <div class="box-container">
                         <span><FontAwesomeIcon icon={['fas', 'fa-lock']} /></span>
-                        <input type="password" class="box" placeholder="Enter a Password" />
+                        <input type="password" class="box" placeholder="Enter a Password" minlength="8" required />
                     </div>
                     <div class="buttons">
                         <button class="btn">Register</button>

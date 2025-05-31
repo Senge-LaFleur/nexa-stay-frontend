@@ -36,21 +36,27 @@ function Sidebar({ isExpanded, toggleSidebar, isMobile }) {
                             </NavLink>
                         </li>
                         <li class="side-list">
-                            <NavLink to="/clients" className={({ isActive }) => isActive ? 'side-link active' : 'side-link'}>
+                            <NavLink to="/rooms" className={({ isActive }) => isActive ? 'side-link active' : 'side-link'}>
+                                <span><FontAwesomeIcon icon={['fas', 'fa-bed']} /></span>
+                                {isExpanded && <h3>Rooms</h3> }
+                            </NavLink>
+                        </li>
+                        <li class="side-list">
+                            <NavLink to="/client" className={({ isActive }) => isActive ? 'side-link active' : 'side-link'}>
                                 <span><FontAwesomeIcon icon={['fas', 'fa-user-friends']} /></span>
                                 {isExpanded && <h3>Clients</h3> }
                             </NavLink>
                         </li>
                         <li class="side-list">
-                            <NavLink to="/reservations" className={({ isActive }) => isActive ? 'side-link active' : 'side-link'}>
+                            <NavLink to="/reservation" className={({ isActive }) => isActive ? 'side-link active' : 'side-link'}>
                                 <span><FontAwesomeIcon icon={['fas', 'fa-calendar-check']} /></span>
                                 {isExpanded && <h3>Reservations</h3> }
                             </NavLink>
                         </li>
                         <li class="side-list">
-                            <NavLink to="/analytics" className={({ isActive }) => isActive ? 'side-link active' : 'side-link'}>
-                                <span><FontAwesomeIcon icon={['fas', 'fa-chart-line']} /></span>
-                                {isExpanded && <h3>Analytics</h3> }
+                            <NavLink to="/payments" className={({ isActive }) => isActive ? 'side-link active' : 'side-link'}>
+                                <span><FontAwesomeIcon icon={['fas', 'fa-dollar']} /></span>
+                                {isExpanded && <h3>Payments</h3> }
                             </NavLink>
                         </li>
                         <li class="side-list">

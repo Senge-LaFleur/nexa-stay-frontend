@@ -29,8 +29,8 @@ function navbar(){
                 <ul id="nav-links" class={`nav-links ${isOpen ? 'open' : ''}`} onClick={closeMenu}>
                     <li><Link to="/">Home</Link></li>
                     <li><Link to="/rooms">Rooms</Link></li>
-                    <li><Link to="/gallery">Gallery</Link></li>
                     <li><Link to="/login">Log In</Link></li>
+                    <li><Link to="/signup">Sign Up</Link></li>
                 </ul>
                 <Link to="/rooms" class="btn nav-btn">Book Now</Link>
             </nav>    

@@ -12,14 +12,14 @@ const Login = () => {
                 <div class="login-content">
                     <div class="box-container">
                         <span><FontAwesomeIcon icon={['fas', 'fa-envelope']} /></span>
-                        <input type="email" class="box" placeholder="Enter your Email" />
+                        <input type="email" class="box" placeholder="Enter your Email" required />
                     </div>
                     <div class="box-container">
                         <span><FontAwesomeIcon icon={['fas', 'fa-lock']} /></span>
-                        <input type="password" class="box" placeholder="Enter your Password" />
+                        <input type="password" class="box" placeholder="Enter your Password" minlength="8" required />
                     </div>
                     <div class="buttons">
-                        <Link to="/" class="link btn">Login</Link>
+                        <button class="btn">Log in</button>
                         <Link to="/" class="link btn">Cancel</Link>
                     </div>
                     <div class="form-links">

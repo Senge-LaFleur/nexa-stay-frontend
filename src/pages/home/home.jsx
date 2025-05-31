@@ -7,6 +7,12 @@ import lobby2 from '../../assets/images/lobby2.jpg';
 import lobby4 from '../../assets/images/lobby4.jpg';
 import lobby5 from '../../assets/images/lobby5.jpg';
 import lobby6 from '../../assets/images/lobby6.jpg';
+import profile1 from '../../assets/images/profile1.jpg';
+import profile2 from '../../assets/images/profile2.jpg';
+import profile3 from '../../assets/images/profile3.jpg';
+import profile4 from '../../assets/images/profile4.jpg';
+import profile5 from '../../assets/images/profile5.jpg';
+import profile6 from '../../assets/images/profile6.jpg';
 import 'swiper/css';
 import 'swiper/css/autoplay';
 import './home.css'
@@ -21,42 +27,6 @@ function Home() {
 
     const images = [lobby2, lobby5, lobby4, about, lobby6];
 
-    // useEffect(() => {
-    //     const scrollRevealOption = {
-    //         distance: "50px",
-    //         origin: "bottom",
-    //         duration: 1000,
-    //     }
-        
-    //     //About Container Scroll Reveal
-    //     ScrollReveal().reveal(".about-image img", {
-    //         ...scrollRevealOption,
-    //         origin: "left",
-    //     })
-    //     ScrollReveal().reveal(".about-content .section-subheader", {
-    //         ...scrollRevealOption,
-    //         delay: 500,
-    //     })
-    //     ScrollReveal().reveal(".about-content .section-header", {
-    //         ...scrollRevealOption,
-    //         delay: 1000,
-    //     })
-    //     ScrollReveal().reveal(".about-content .section-description", {
-    //         ...scrollRevealOption,
-    //         delay: 1500,
-    //     })
-    //     ScrollReveal().reveal(".about-btn", {
-    //         ...scrollRevealOption,
-    //         delay: 2000,
-    //     })
-
-    //     //Service Container Scroll Reveal
-    //     ScrollReveal().reveal(".service-list li", {
-    //         ...scrollRevealOption,
-    //         interval: 500,
-    //         origin: "right",
-    //     })
-    // }, [])
 
     return (
         <div class="home">
@@ -167,31 +137,99 @@ function Home() {
                 <p class="section-subheader">EXPLORE</p>
                 <h2 class="section-header">Visit Our Gallery</h2>
                 <ImageSlider images={images} />
-                {/* <div class="explore-bg">
-                    
-                    <div class="explore-content">
-                        <img src={lobby2} alt="about" />
-                    </div>
-                    <div class="explore-content">
-                        <img src={lobby5} alt="about" />
-                    </div>
-                    <div class="explore-content">
-                        <img src={lobby4} alt="about" />
-                    </div>
-                    <div class="explore-content">
-                        <img src={about} alt="about" />
-                    </div>
-                    <div class="explore-content">
-                        <img src={lobby6} alt="about" />
-                    </div>
-  
-                </div> */}
                 <div class="more">
                     <Link to="/">
                         <h3>View More <FontAwesomeIcon icon={['fas', 'fa-arrow-right']} /></h3>
                     </Link>
                 </div>
                 
+            </section>
+
+            <section class="review">
+                <div class="section-container review-container">
+                    <p class="section-subheader">OUR REVIEWS</p>
+                    <h2 class="section-header">What our Clients Say</h2>
+                    <div class="review-grid">
+                        <div class="review-card">
+                            <img src={profile1} alt="review-profile" />
+                            <div class="star">
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star-half-alt']} id="half-star" />
+                            </div>
+                            <p>The booking process was seamless, and the confirmation was instant.
+                                I highly recommend NexaStay for hassle-free hotel bookings.
+                            </p>
+                        </div>
+                        <div class="review-card">
+                            <img src={profile2} alt="review-profile" />
+                            <div class="star">
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star-half-alt']} id="half-star" />
+                            </div>
+                            <p>The booking process was seamless, and the confirmation was instant.
+                                I highly recommend NexaStay for hassle-free hotel bookings.
+                            </p>
+                        </div>
+                        <div class="review-card">
+                            <img src={profile3} alt="review-profile" />
+                            <div class="star">
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star-half-alt']} id="half-star" />
+                            </div>
+                            <p>The booking process was seamless, and the confirmation was instant.
+                                I highly recommend NexaStay for hassle-free hotel bookings.
+                            </p>
+                        </div>
+                        <div class="review-card">
+                            <img src={profile4} alt="review-profile" />
+                            <div class="star">
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star-half-alt']} id="half-star" />
+                            </div>
+                            <p>The booking process was seamless, and the confirmation was instant.
+                                I highly recommend NexaStay for hassle-free hotel bookings.
+                            </p>
+                        </div>
+                        <div class="review-card">
+                            <img src={profile5} alt="review-profile" />
+                            <div class="star">
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star-half-alt']} id="half-star" />
+                            </div>
+                            <p>The booking process was seamless, and the confirmation was instant.
+                                I highly recommend NexaStay for hassle-free hotel bookings.
+                            </p>
+                        </div>
+                        <div class="review-card">
+                            <img src={profile6} alt="review-profile" />
+                            <div class="star">
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star']} />
+                                <FontAwesomeIcon icon={['fas','fa-star-half-alt']} id="half-star" />
+                            </div>
+                            <p>The booking process was seamless, and the confirmation was instant.
+                                I highly recommend NexaStay for hassle-free hotel bookings.
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </section>            
 
         </div>

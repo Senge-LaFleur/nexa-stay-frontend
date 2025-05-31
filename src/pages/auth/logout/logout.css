@@ -1,0 +1,76 @@
+:root{
+    --black: #111;
+    --grey: #555;
+    --white: #fff;
+    --blue: #130351;
+    --green: #084846;
+    --light-green: #6ba4a2;
+    --yellow: #ffd000;
+    --orange: #f4af26;
+    --box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    --max-width: 1200px;
+}
+
+.logout-form-container{
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 10000;
+    min-height: 100vh;
+    width: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logout-form-container .logout-container{
+    position: relative;
+    margin: 2rem;
+    padding: 1.5rem 2rem;
+    border-radius: .5rem;
+    background-color: var(--white);
+    width: 100%;
+}
+
+.logout-form-container .logout-container span{
+    position: absolute;
+    top: 1.2rem;
+    right: 1.5rem;
+    font-size: 1.2rem;
+    color: var(--black);
+}
+
+.logout-form-container .logout-container :is(.section-header){
+    text-align: center;
+    margin-inline: auto;
+}
+
+.logout-form-container .logout-container :is(.section-subheader){
+    font-size: 1.2rem;
+}
+
+.logout-content .buttons{
+    display: flex;
+    justify-content: space-between;
+    padding: 0 3rem;
+}
+
+.logout-content .link{
+    text-decoration: none;
+}
+
+.logout-content .form-link p{
+    padding: .5rem 0;
+    font-size: 1rem;
+    text-align: center;
+    color: var(--grey);
+}
+
+.logout-content .form-link p span{
+    color: var(--light-blue);
+}
+
+.logout-content .form-link p span:hover{
+    text-decoration: underline;
+}
+
