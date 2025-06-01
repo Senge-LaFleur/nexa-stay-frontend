@@ -4,7 +4,7 @@ import Home from './pages/home/home.jsx'
 import HomeLayout from './layouts/homeLayout.jsx'
 import Rooms from './pages/rooms/rooms.jsx'
 import Login from './pages/auth/login/login.jsx'
-import Signup from './pages/auth/signUp/signUp.jsx';
+import Signup from './pages/auth/signup/signup.jsx';
 import Dashboard from './pages/dashboard/dashboard.jsx'
 import Client from './pages/client/client.jsx';
 import Reservation from './pages/reservation/reservation.jsx';
