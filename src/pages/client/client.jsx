@@ -5,8 +5,14 @@ import Sidebar from '../../components/sidebar/sidebar.jsx'
 import Navbar2 from '../../components/navbar2/navbar2.jsx';
 import profile1 from '../../assets/images/profile1.jpg'
 import './client.css'
+import { API_CONFIG } from '../../config/apiConfig';
+import apiClient from '../../api/apiClient';
 
-function Client() {
+const ClientPage = () => {
+    const [adminUsers, setAdminUsers] = useState([]);
+    const [clientUsers, setClientUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -16,116 +22,136 @@ function Client() {
 
     useEffect(() => {
         const handleResize = () => {
-        const mobile = window.innerWidth <= 768;
-        setIsMobile(mobile);
-        if(mobile) setIsSidebarExpanded(false);
+            const mobile = window.innerWidth <= 768;
+            setIsMobile(mobile);
+            if (mobile) setIsSidebarExpanded(false);
         };
-        
+
         window.addEventListener('resize', handleResize);
         handleResize();
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-  return (
-    <div class="client" id="client">
-
-
-        {/* ------------------------------ SIDEBAR ------------------------------- */}
-
-        <Sidebar isExpanded={isSidebarExpanded} toggleSidebar={toggleSidebar} isMobile={isMobile} />
-
-        <div 
-            class={`container ${isSidebarExpanded ? 'expanded' : 'collapsed'}`}
-            style={
-                {marginLeft: !isMobile && isSidebarExpanded ? 
-                    '280px' : !isMobile && !isSidebarExpanded ?
-                    '100px' : '100px', transition: 'margin-left 0.3s ease-in-out'
-                }
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                setLoading(true);
+                const [adminResponse, clientResponse] = await Promise.all([
+                    apiClient.get(`${API_CONFIG.AUTH_SERVICE}/users/by-role/ADMIN`),
+                    apiClient.get(`${API_CONFIG.AUTH_SERVICE}/users/by-role/CLIENT`)
+                ]);
+                setAdminUsers(adminResponse.data);
+                setClientUsers(clientResponse.data);
+                setError(null);
+            } catch (err) {
+                console.error('Error fetching users:', err);
+                setError('Failed to load users. Please try again later.');
+            } finally {
+                setLoading(false);
             }
-        >
+        };
+
+        fetchUsers();
+    }, []);
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div className="error">{error}</div>;
+
+    return (
+        <div className="client" id="client">
 
 
-            
+            {/* ------------------------------ SIDEBAR ------------------------------- */}
 
-            {/* ------------------------------ MAIN SECTION ------------------------------- */}
+            <Sidebar isExpanded={isSidebarExpanded} toggleSidebar={toggleSidebar} isMobile={isMobile} />
 
-            <main>
+            <div
+                className={`container ${isSidebarExpanded ? 'expanded' : 'collapsed'}`}
+                style={
+                    {
+                        marginLeft: !isMobile && isSidebarExpanded ?
+                            '280px' : !isMobile && !isSidebarExpanded ?
+                                '100px' : '100px', transition: 'margin-left 0.3s ease-in-out'
+                    }
+                }
+            >
 
-                <Navbar2 />
-
-                <h2 class="section-header">Clients</h2>
-
-                <div class="date">
-                    <input type="date" />
-                </div>
 
 
-                <div class="table-data">
-                    <div class="order">
-                        <div class="head">
-                            <h3>Users Registered In The Platform</h3>
-                            <span><FontAwesomeIcon icon={['fas','fa-search']} /></span>
-                            <span><FontAwesomeIcon icon={['fas','fa-filter']} /></span>
-                        </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>User Name</th>
-                                    <th>Email</th>
-                                    <th>Password</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <img src={profile1} alt="" />
-                                        <p>John Doe</p>
-                                    </td>
-                                    <td>johndoe@gmail.com</td>
-                                    <td>johndoe</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <img src={profile1} alt="" />
-                                        <p>John Doe</p>
-                                    </td>
-                                    <td>johndoe@gmail.com</td>
-                                    <td>johndoe</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <img src={profile1} alt="" />
-                                        <p>John Doe</p>
-                                    </td>
-                                    <td>johndoe@gmail.com</td>
-                                    <td>johndoe</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <img src={profile1} alt="" />
-                                        <p>John Doe</p>
-                                    </td>
-                                    <td>johndoe@gmail.com</td>
-                                    <td>johndoe</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <img src={profile1} alt="" />
-                                        <p>John Doe</p>
-                                    </td>
-                                    <td>johndoe@gmail.com</td>
-                                    <td>johndoe</td>
-                                </tr>
-                            </tbody>
-                        </table>
+
+                {/* ------------------------------ MAIN SECTION ------------------------------- */}
+
+                <main>
+
+                    <Navbar2 />
+
+                    <h2 className="section-header">Admins and Clients</h2>
+
+                    <div className="date">
+                        <input type="date" />
                     </div>
-                    
-                </div>
 
-            </main>
+
+                    <div className="table-data">
+                        <div className="order">
+                            <div className="head">
+                                <h3>All Users Registered In The Platform</h3>
+                                <span><FontAwesomeIcon icon={['fas', 'fa-search']} /></span>
+                                <span><FontAwesomeIcon icon={['fas', 'fa-filter']} /></span>
+                            </div>
+
+                            <h4 className="section-subheader">Administrators</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {adminUsers.map(user => (
+                                        <tr key={user.id}>
+                                            <td>{user.id}</td>
+                                            <td>{user.nom}</td>
+                                            <td>{user.email}</td>
+                                            <td>{user.role}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+
+                            <br /><br /><br />        
+                            <h4 className="section-subheader">Clients</h4>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {clientUsers.map(user => (
+                                        <tr key={user.id}>
+                                            <td>{user.id}</td>
+                                            <td>{user.nom}</td>
+                                            <td>{user.email}</td>
+                                            <td>{user.role}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                </main>
+            </div>
         </div>
-    </div>
-  )
-}
+    );
+};
 
-export default Client;
+export default ClientPage;

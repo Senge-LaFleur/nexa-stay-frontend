@@ -430,7 +430,6 @@ function RoomsTable() {
                                             <option value="">All Beds</option>
                                             <option value="1">1 Bed</option>
                                             <option value="2">2 Beds</option>
-                                            <option value="3">3 Beds</option>
                                         </select>
 
                                         <select
@@ -471,13 +470,13 @@ function RoomsTable() {
                                     <tbody>
                                         {rooms.length === 0 ? (
                                             <tr>
-                                                <td colSpan="8" className="empty-message">
+                                                <td colspan="8" className="empty-message">
                                                     No rooms available. Use the form above to create a new room.
                                                 </td>
                                             </tr>
                                         ) : filteredRooms.length === 0 ? (
                                             <tr>
-                                                <td colSpan="8" className="empty-message">
+                                                <td colspan="8" className="empty-message">
                                                     No rooms match the current filters.
                                                 </td>
                                             </tr>

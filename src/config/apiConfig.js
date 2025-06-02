@@ -1,7 +1,7 @@
 // API Base URLs for different microservices
 export const API_CONFIG = {
     AUTH_SERVICE: 'http://localhost:8081/api/auth',
-    ROOM_SERVICE: 'http://localhost:8085/api/v1/rooms',
+    ROOM_SERVICE: 'http://localhost:8081/api/v1/rooms',
     BOOKING_SERVICE: 'http://localhost:8081/api/bookings',
     USER_SERVICE: 'http://localhost:8081/api/users'
 };

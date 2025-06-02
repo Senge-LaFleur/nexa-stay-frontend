@@ -36,8 +36,7 @@ export const register = async (userData) => {
         const registerData = {
             nom: userData.name,
             email: userData.email,
-            motDePasse: userData.password,
-            role: "CLIENT" // Send as string to match Java enum
+            motDePasse: userData.password
         };
 
         console.log('Sending registration request:', registerData);
@@ -48,6 +47,9 @@ export const register = async (userData) => {
 
         if (response.data.token) {
             localStorage.setItem('token', response.data.token);
+            if (response.data.role) {
+                localStorage.setItem('userRole', response.data.role);
+            }
         }
         return response.data;
     } catch (error) {
