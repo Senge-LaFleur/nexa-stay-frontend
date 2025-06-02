@@ -1,4 +1,4 @@
-:root{
+:root {
     --black: #111;
     --grey: #555;
     --white: #fff;
@@ -7,7 +7,7 @@
     --light-green: #6ba4a2;
     --yellow: #fbd650;
     --orange: #f4af26;
-    --box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     --max-width: 1200px;
 }
 
@@ -53,8 +53,8 @@
 
 .client-content .box-container .box{
     width: 100%;
-    padding: .5rem;
-    font-size: 1rem;
+    padding: 1rem;
+    font-size: 1.2rem;
     color: var(--black);
     margin: .6rem 0;
     border: 1px solid var(--grey);
@@ -83,7 +83,7 @@
     color: var(--grey);
 }
 
-input[type="checkbox"]{
+.client-content input[type="checkbox"]{
     accent-color: var(--light-green);
 }
 

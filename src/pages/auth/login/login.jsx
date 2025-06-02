@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { login } from '../../../api/authApi.js';
 import { Link, useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 import './login.css'
 
 const Login = () => {
@@ -14,51 +15,66 @@ const Login = () => {
         e.preventDefault();
         try {
             const data = await login(email, password);
-            localStorage.setItem('token', data.token); // stocker le JWT
-            alert('Connexion réussie !');
-            navigate('/rooms');
+            console.log('Login response:', data); // Debug log
+
+            // Store token
+            if (data.token) {
+                localStorage.setItem('token', data.token);
+                console.log('User role from response:', data.role); // Debug log
+
+                // Role-based redirection
+                const userRole = data.role;
+                console.log('Checking role for redirection:', userRole); // Debug log
+
+                if (userRole === 'ADMIN') {
+                    console.log('Redirecting to dashboard (ADMIN)'); // Debug log
+                    navigate('/dashboard');
+                } else {
+                    console.log('Redirecting to rooms (CLIENT)'); // Debug log
+                    navigate('/rooms');
+                }
+
+                alert('Login successful!');
+            }
         } catch (err) {
-            setError(err.response?.data || 'Erreur lors de la connexion');
+            console.error('Login error:', err); // Debug log
+            setError(err.message || 'Error during login');
         }
     };
 
     return (
-        <div class="login-form-container">
-            <form action="" onSubmit={handleLogin}>
-                <h2 class="section-header login-form-header">Log In</h2>
-                <div class="login-content">
-                    <div class="box-container">
-                        <span><FontAwesomeIcon icon={['fas', 'fa-envelope']} /></span>
-                        <input class="box" type="email" value={email}
+        <div className="login-form-container">
+            <form onSubmit={handleLogin}>
+                <h2 className="section-header login-form-header">Log In</h2>
+                <div className="login-content">
+                    <div className="box-container">
+                        <span><FontAwesomeIcon icon={faEnvelope} /></span>
+                        <input className="box" type="email" value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="Enter your Email" required
                         />
                     </div>
-                    <div class="box-container">
-                        <span><FontAwesomeIcon icon={['fas', 'fa-lock']} /></span>
-                        <input class="box" type="password" value={password}
+                    <div className="box-container">
+                        <span><FontAwesomeIcon icon={faLock} /></span>
+                        <input className="box" type="password" value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter your Password" minlength="8" required
+                            placeholder="Enter your Password" minLength="8" required
                         />
                     </div>
-                    <div class="buttons">
-                        <button class="btn" type="submit">Log in</button>
+                    <div className="buttons">
+                        <button className="btn" type="submit">Log in</button>
                         {error && <p style={{ color: 'red' }}>{error}</p>}
-                        <Link to="/" class="link btn">Cancel</Link>
+                        <Link to="/" className="link btn">Cancel</Link>
                     </div>
-                    <div class="form-links">
-                        <Link to="/" class="link"><p>Forgot password? <span>Click Here</span></p></Link>
-                        <Link to="/signUp" class="link"><p>Do not have an account? <span>Sign up</span></p></Link>
+                    <div className="form-links">
+                        <Link to="/" className="link"><p>Forgot password? <span>Click Here</span></p></Link>
+                        <Link to="/signUp" className="link"><p>Do not have an account? <span>Sign up</span></p></Link>
                     </div>
                 </div>
             </form>
-
         </div>
-
-
-  )
-} 
-
+    );
+};
 
 export default Login;
 

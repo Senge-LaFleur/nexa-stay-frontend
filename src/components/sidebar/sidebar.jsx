@@ -38,6 +38,12 @@ function Sidebar({ isExpanded, toggleSidebar, isMobile }) {
                         <li class="side-list">
                             <NavLink to="/rooms" className={({ isActive }) => isActive ? 'side-link active' : 'side-link'}>
                                 <span><FontAwesomeIcon icon={['fas', 'fa-bed']} /></span>
+                                {isExpanded && <h3>Rooms Client</h3> }
+                            </NavLink>
+                        </li>
+                        <li class="side-list">
+                            <NavLink to="/roomsTable" className={({ isActive }) => isActive ? 'side-link active' : 'side-link'}>
+                                <span><FontAwesomeIcon icon={['fas', 'fa-window-maximize']} /></span>
                                 {isExpanded && <h3>Rooms</h3> }
                             </NavLink>
                         </li>

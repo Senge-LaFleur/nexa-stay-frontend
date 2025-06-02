@@ -1,4 +1,4 @@
-:root{
+:root {
     --black: #111;
     --grey: #555;
     --white: #fff;
@@ -8,35 +8,35 @@
     --yellow: #fbd650;
     --orange: #f4af26;
     --red: #700e0e;
-    --box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     --max-width: 1200px;
 }
 
-.rooms{
+.rooms {
     background-image: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), url('../../assets/images/dot-pattern1.webp');
     background-size: cover;
     background-position: center;
 }
 
-.room-header{
-    background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('../../assets/images/bedroom1.jpg');
+.room-header {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../../assets/images/bedroom1.jpg');
     background-position: center center;
     background-size: cover;
     background-repeat: no-repeat;
     height: 60vh;
 }
 
-.room-header-container{
+.room-header-container {
     text-align: center;
 }
 
-.room-header-container p{
+.room-header-container p {
     margin-bottom: 1rem;
     font-size: 1.2rem;
     color: var(--white);
 }
 
-.room-header-container h1{
+.room-header-container h1 {
     margin-bottom: 2rem;
     font-size: 4rem;
     font-weight: 500;
@@ -44,11 +44,11 @@
     color: var(--white);
 }
 
-.booking-container{
+.booking-container {
     padding-block: 0;
 }
 
-.booking-form{
+.booking-form {
     padding: 2rem;
     display: flex;
     gap: 1rem;
@@ -61,7 +61,7 @@
     box-shadow: var(--box-shadow);
 }
 
-.input-group{
+.input-group {
     flex: 1 1 220px;
     display: flex;
     align-items: center;
@@ -69,17 +69,17 @@
     gap: 1rem;
 }
 
-.input-group span{
+.input-group span {
     font-size: 1.75rem;
     color: var(--orange);
 }
 
-.input-group label{
+.input-group label {
     font-weight: 500;
     color: var(--white);
 }
 
-.input-group input{
+.input-group input {
     display: block;
     width: 100%;
     height: 40px;
@@ -93,124 +93,165 @@
     border-radius: 5px;
 }
 
-.input-group input::placeholder{
+.input-group input::placeholder {
     color: var(--grey);
 }
 
-.room-container .intro{
+.rooms :is(.section-container) {
+    padding-top: 2rem;
+}
+
+.room-container .intro {
     display: grid;
     gap: 1rem;
 }
 
-.room-container .intro :is(.section-subheader, .section-header, .section-description){
+.room-container .intro :is(.section-subheader, .section-header, .section-description) {
     text-align: center;
     margin-inline: auto;
 }
 
-.room-container .intro .section-description{
+.room-container .intro .section-description {
     color: var(--black);
     line-height: 2rem;
 }
 
-.room-grid{
+.room-grid {
     margin-top: 4rem;
     display: grid;
     gap: 1rem;
 }
 
-.room-card{
+.room-card {
     overflow: hidden;
     border-radius: 10px;
     box-shadow: var(--box-shadow);
 }
 
-.room-card-image{
+.room-card-image {
     position: relative;
     isolation: isolate;
 }
 
-.room-card-icons{
-    position: absolute;
-    right: 1rem;
-    bottom: 1rem;
+.room-card-image img {
+    height: 250px;
     width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex-wrap: wrap;
-    gap: 1rem;
-    z-index: 1;
+    object-fit: cover;
 }
 
-.room-card-icons span{
-    display: inline-block;
-    padding: 2px 8px;
-    font-size: 1.5rem;
-    background-color: var(--yellow);
-    border-radius: 100%;
-    box-shadow: var(--box-shadow);
-    cursor: pointer;
-}
-
-.room-card-icons span:nth-child(1){
-    color: var(--red);
-}
-.room-card-icons span:nth-child(2){
-    color: var(--blue);
-}
-.room-card-icons span:nth-child(3){
-    color: var(--green);
-}
-
-.room-card-details{
+.room-card-details {
     padding: 1rem;
 }
 
-.room-card h4{
+.room-card h4 {
     margin-bottom: 0.5rem;
     font-size: 1.2rem;
     font-weight: 500;
     color: var(--black);
 }
 
-.room-card p{
+.room-card p {
     margin-bottom: 0.5rem;
     color: var(--grey);
 }
 
-.room-card h5{
+.room-card h5 {
     margin-bottom: 1rem;
     font-size: 1rem;
     font-weight: 500;
     color: #222;
 }
 
-.room-card h5 span{
+.room-card h5 span {
     font-size: 1.1rem;
     color: var(--black);
 }
 
-.room-card .btn{
+.room-card .btn {
     background-color: var(--yellow);
 }
 
+.room-container .filters {
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: var(--white);
+    border-radius: var(--border-radius-2);
+    box-shadow: var(--box-shadow);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+}
 
+.room-container .filters label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--black);
+    margin-right: 1rem;
+    white-space: nowrap;
+}
 
-@media(width > 576px){
-    .room-grid{
+.room-container .filters select {
+    padding: 0.8rem 1.2rem;
+    border: 1px solid var(--extra-light);
+    border-radius: var(--border-radius-1);
+    background-color: var(--white);
+    color: var(--black);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 180px;
+    flex: 1;
+}
+
+.room-container .filters select:hover {
+    border-color: var(--yellow);
+}
+
+.room-container .filters select:focus {
+    outline: none;
+    border-color: var(--yellow);
+    box-shadow: 0 0 0 2px rgba(255, 208, 0, 0.1);
+}
+
+.room-container .filters select option {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Responsive styles for filters */
+@media (max-width: 768px) {
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .filters label {
+        margin-bottom: 0.5rem;
+    }
+
+    .filters select {
+        width: 100%;
+        min-width: unset;
+    }
+}
+
+@media(width > 576px) {
+    .room-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
-@media(width > 768px){
-    .room-grid{
+@media(width > 768px) {
+    .room-grid {
         grid-template-columns: repeat(3, 1fr);
     }
 }
 
-@media(width > 1024px){
-    .room-grid{
+@media(width > 1024px) {
+    .room-grid {
         gap: 2rem;
     }
 }
-

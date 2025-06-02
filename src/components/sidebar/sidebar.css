@@ -44,11 +44,6 @@
     grid-template-columns: 14rem auto 23rem;
 }
 
-.aside img{
-    display: block;
-    width: 100%;
-}
-
 .aside h1{
     font-weight: 800;
     font-size: 1.8rem;

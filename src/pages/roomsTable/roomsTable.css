@@ -1,0 +1,536 @@
+:root {
+    --black: #111;
+    --grey: #555;
+    --light-grey-text: #b6bdc6;
+    --white: #fff;
+    --extra-light: #eee;
+    --green: #084846;
+    --light-green: #6ba4a2;
+    --extra-light-green: #e2edeb;
+    --orange: #f4af26;
+    --yellow: #ffd000;
+    --light-yellow: #fff2c6;
+    --pink: #fad4d3;
+    --light-blue: #187fcd;
+    --danger: #f8636f;
+    --success: #41f1b6;
+    --blue-sidebar: #d1f1fd;
+    --color-light: rgba(24, 127, 205, 0.1);
+
+    --card-border-radius: 2rem;
+    --border-radius-1: 0.4rem;
+    --border-radius-2: 0.8rem;
+    --border-radius-3: 1.2rem;
+
+    --card-padding: 1.8rem;
+    --padding-1: 1.2rem;
+    --max-width: 1200px;
+    --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    --box-shadow-1: 0 2rem 3rem var(--color-light);
+}
+
+
+.roomsTable {
+    font-size: 0.88rem;
+    color: var(--black);
+    width: 100vw;
+    height: 100vh;
+    background: var(--extra-light);
+    user-select: none;
+    overflow-x: hidden;
+}
+
+.roomsTable .container {
+    position: relative;
+    padding-right: 1rem;
+    width: auto;
+    margin-left: 280px;
+    transition: all 0.3s ease;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+
+.roomsTable .container.collapsed {
+    width: auto;
+    margin-left: 80px;
+    transition: all 0.3s ease;
+}
+
+
+
+
+
+/* ------------------------------ MAIN SECTION ------------------------------- */
+
+.roomsTable main .section-header {
+    text-align: left;
+    margin-top: 2rem;
+}
+
+.roomsTable main .date {
+    display: inline-block;
+    background: var(--extra-light-green);
+    border-radius: var(--border-radius-1);
+    margin-top: 1rem;
+    padding: 0.5rem 1.6rem;
+}
+
+.roomsTable main .date input[type="date"] {
+    background: transparent;
+    color: var(--black);
+    border: none;
+    outline: none;
+}
+
+
+
+#roomsTable main .table-data {
+    display: flex;
+    flex-wrap: wrap;
+    grid-gap: 24px;
+    margin-top: 24px;
+    width: 100%;
+    color: var(--black);
+}
+
+#roomsTable main .table-data>div {
+    border-radius: 20px;
+    background: var(--white);
+    padding: 24px;
+    overflow-x: auto;
+}
+
+#roomsTable main .table-data .head {
+    display: flex;
+    align-items: center;
+    grid-gap: 16px;
+    margin-bottom: 24px;
+}
+
+#roomsTable main .table-data .head h3 {
+    margin-right: auto;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+#roomsTable main .table-data .head span {
+    cursor: pointer;
+    color: var(--green);
+    margin-left: 1rem;
+}
+
+#roomsTable main .table-data .order {
+    flex-grow: 1;
+    flex-basis: 500px;
+}
+
+#roomsTable main .table-data .order table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#roomsTable main .table-data .order table th {
+    padding: 12px 16px;
+    font-size: 13px;
+    text-align: left;
+    border-bottom: 1px solid var(--extra-light);
+}
+
+#roomsTable main .table-data .order table td {
+    padding: 12px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+#roomsTable main .table-data .order table tr td:first-child {
+    display: flex;
+    align-items: center;
+    grid-gap: 12px;
+    padding-left: 6px;
+}
+
+#roomsTable main .table-data .order table td img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+#roomsTable main .table-data .order table tbody tr:hover {
+    background: var(--extra-light);
+}
+
+#roomsTable main .table-data .order table tr td .status {
+    font-size: 10px;
+    padding: 6px 16px;
+    color: var(--white);
+    border-radius: 20px;
+    font-weight: 700;
+}
+
+#roomsTable main .table-data .order table tr td .status.completed {
+    background: var(--light-green);
+}
+
+#roomsTable main .table-data .order table tr td .status.process {
+    background: var(--yellow);
+}
+
+#roomsTable main .table-data .order table tr td .status.pending {
+    background: var(--orange);
+}
+
+
+#roomsTable main .table-data .todo {
+    flex-grow: 1;
+    flex-basis: 300px;
+}
+
+#roomsTable main .table-data .todo .todo-list {
+    width: 100%;
+}
+
+#roomsTable main .table-data .todo .todo-list li {
+    width: 100%;
+    margin-bottom: 16px;
+    background: var(--extra-light);
+    border-radius: 10px;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#roomsTable main .table-data .todo .todo-list li span {
+    cursor: pointer;
+}
+
+#roomsTable main .table-data .todo .todo-list li.completed {
+    border-left: 10px solid var(--light-green);
+}
+
+#roomsTable main .table-data .todo .todo-list li.not-completed {
+    border-left: 10px solid var(--orange);
+}
+
+#roomsTable main .table-data .todo .todo-list li:last-child {
+    margin-bottom: 0;
+}
+
+/* MAIN */
+/* CONTENT */
+
+.empty-table-message {
+    text-align: center;
+    color: var(--grey);
+    padding: 2rem !important;
+    font-style: italic;
+}
+
+@media screen and (max-width: 768px) {
+    #roomsTable {
+        width: 100vw;
+        height: 100vh;
+        left: 200px;
+    }
+
+    #roomsTable main .table-data .head {
+        min-width: 420px;
+    }
+
+    #roomsTable main .table-data .order table {
+        min-width: 420px;
+    }
+}
+
+
+
+@media screen and (max-width: 576px) {
+
+    #roomsTable main .box-info {
+        grid-template-columns: 1fr;
+    }
+
+    #roomsTable main .table-data .head {
+        min-width: 420px;
+    }
+
+    #roomsTable main .table-data .order table {
+        min-width: 420px;
+    }
+
+    #roomsTable main .table-data .todo .todo-list {
+        min-width: 420px;
+    }
+}
+
+.create-room-section {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 24px;
+    margin: 24px 0;
+}
+
+.create-room-section h3 {
+    color: var(--black);
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.create-room-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.create-room-form .form-row {
+    display: flex;
+    gap: 16px;
+}
+
+.create-room-form input,
+.create-room-form select {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid var(--extra-light);
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.create-room-form input:focus,
+.create-room-form select:focus {
+    outline: none;
+    border-color: var(--light-blue);
+}
+
+.empty-message {
+    text-align: center;
+    color: var(--grey);
+    padding: 40px;
+    font-style: italic;
+}
+
+@media screen and (max-width: 768px) {
+    .create-room-form .form-row {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .create-room-btn {
+        width: 100%;
+    }
+}
+
+.image-upload-container {
+    flex: 1;
+    position: relative;
+}
+
+.image-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--extra-light);
+    border-radius: 4px;
+    background: white;
+}
+
+.image-input::-webkit-file-upload-button {
+    background: var(--green);
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.image-input::-webkit-file-upload-button:hover {
+    background: var(--light-green);
+}
+
+.image-preview {
+    margin-top: 10px;
+    max-width: 200px;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.image-preview img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    display: block;
+}
+
+/* Add to your existing media queries */
+@media screen and (max-width: 768px) {
+    .image-preview {
+        max-width: 100%;
+    }
+}
+
+.table-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.table-actions span {
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+}
+
+.table-actions span:hover {
+    background-color: var(--orange);
+}
+
+.search-bar {
+    margin: 1rem 0;
+    padding: 0.5rem;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--green);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: var(--blue);
+}
+
+.filter-section {
+    margin: 1rem 0;
+    padding: 1rem;
+    background-color: var(--light);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filter-row select {
+    padding: 0.6rem;
+    border: 1px solid var(--grey);
+    border-radius: 6px;
+    background-color: white;
+    font-size: 0.9rem;
+    min-width: 150px;
+}
+
+.filter-row select:focus {
+    outline: none;
+    border-color: var(--blue);
+}
+
+.clear-filters {
+    padding: 0.6rem 1rem;
+    background-color: var(--red);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.clear-filters:hover {
+    background-color: #d32f2f;
+}
+
+@media screen and (max-width: 768px) {
+    .filter-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-row select {
+        width: 100%;
+    }
+}
+
+.loading-message,
+.error-message {
+    text-align: center;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+.loading-message {
+    background-color: #f0f0f0;
+    color: #666;
+}
+
+.error-message {
+    background-color: #fee;
+    color: #c00;
+    border: 1px solid #fcc;
+}
+
+.room-image-container {
+    width: 100px;
+    height: 80px;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#roomsTable main .table-data .order table .room-table-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.room-table-image:hover {
+    transform: scale(1.1);
+}
+
+/* Make the image column width consistent */
+#roomsTable main .table-data .order table th:last-child,
+#roomsTable main .table-data .order table td:last-child {
+    width: 140px;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-btn:hover {
+    background-color: var(--danger);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Update the actions column width */
+#roomsTable main .table-data .order table th:last-child,
+#roomsTable main .table-data .order table td:last-child {
+    width: 80px;
+    text-align: center;
+}

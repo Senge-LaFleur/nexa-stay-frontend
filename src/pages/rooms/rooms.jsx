@@ -1,177 +1,189 @@
-import React, { useState } from 'react'
+import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Navbar from '../../components/navbar/navbar.jsx'
-import room1 from '../../assets/images/bedroom1.jpg'
-import room2 from '../../assets/images/bedroom2.jpg'
-import room3 from '../../assets/images/bedroom3.jpg'
-import room4 from '../../assets/images/bedroom4.jpg'
-import room5 from '../../assets/images/bedroom5.jpg'
-import room6 from '../../assets/images/bedroom6.jpg'
-import './rooms.css'
+import { faCalendarAlt, faUser } from '@fortawesome/free-solid-svg-icons';
+import Navbar from '../../components/navbar/navbar.jsx';
+import './rooms.css';
+import { getAllRooms } from '../../api/roomApi';
 
 function Rooms() {
+    const [filters, setFilters] = useState({
+        type: '',
+        priceRange: '',
+        beds: ''
+    });
+    const [rooms, setRooms] = useState([]);
+    const [filteredRooms, setFilteredRooms] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        fetchRooms();
+    }, []);
+
+    // Apply filters whenever filters or rooms change
+    useEffect(() => {
+        filterRooms();
+    }, [filters, rooms]);
+
+    const fetchRooms = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await getAllRooms();
+            if (response.message === "Success") {
+                setRooms(response.data || []);
+                setFilteredRooms(response.data || []); // Initialize filtered rooms with all rooms
+            } else {
+                throw new Error(response.message || 'Failed to fetch rooms');
+            }
+        } catch (error) {
+            console.error('Error fetching rooms:', error);
+            setError(error.message || 'Failed to fetch rooms');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const filterRooms = () => {
+        let result = [...rooms];
+
+        // Filter by room type
+        if (filters.type) {
+            result = result.filter(room => room.type === filters.type);
+        }
+
+        // Filter by price range
+        if (filters.priceRange) {
+            const [min, max] = filters.priceRange.split('-').map(Number);
+            result = result.filter(room => {
+                const price = Number(room.price);
+                if (max) {
+                    return price >= min && price <= max;
+                } else {
+                    // Handle cases like "400" (400 and above)
+                    return price >= min;
+                }
+            });
+        }
+
+        // Filter by number of beds
+        if (filters.beds) {
+            result = result.filter(room => room.capacity === Number(filters.beds));
+        }
+
+        setFilteredRooms(result);
+    };
+
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        setFilters(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
 
     return (
-        <div class="rooms">
-            <section class="room-header">
+        <div className="rooms">
+            <section className="room-header">
                 <Navbar />
-                <div class="section-container room-header-container" id="room-header">
+                <div className="section-container room-header-container" id="room-header">
                     <p>Rest - Recharge - Repeat</p>
                     <h1>Nexa Stay Rooms</h1>
                 </div>
             </section>
 
-            <section class="section-container booking-container">
-                <form action="/" class="booking-form">
-                    <div class="input-group">
-                        <span><FontAwesomeIcon icon={['fas', 'fa-calendar-alt']} /></span>
+            <section className="section-container booking-container">
+                <form action="/" className="booking-form">
+                    <div className="input-group">
+                        <span><FontAwesomeIcon icon={faCalendarAlt} /></span>
                         <div>
-                            <label for="check-in">CHECK-IN</label>
-                            <input type="text" placeholder="Check In" />
+                            <label htmlFor="check-in">CHECK-IN</label>
+                            <input type="date" id="check-in" placeholder="Check In" />
                         </div>
                     </div>
-                    <div class="input-group">
-                        <span><FontAwesomeIcon icon={['fas', 'fa-calendar-alt']} /></span>
+                    <div className="input-group">
+                        <span><FontAwesomeIcon icon={faCalendarAlt} /></span>
                         <div>
-                            <label for="check-out">CHECK-OUT</label>
-                            <input type="text" placeholder="Check Out" />
+                            <label htmlFor="check-out">CHECK-OUT</label>
+                            <input type="date" id="check-out" placeholder="Check Out" />
                         </div>
                     </div>
-                    <div class="input-group">
-                        <span><FontAwesomeIcon icon={['fas', 'fa-user']} /></span>
+                    <div className="input-group">
+                        <span><FontAwesomeIcon icon={faUser} /></span>
                         <div>
-                            <label for="guest">GUESTS</label>
-                            <input type="text" placeholder="Guests" />
+                            <label htmlFor="guest">GUESTS</label>
+                            <input type="number" id="guest" placeholder="Guests" min="1" />
                         </div>
                     </div>
-                    <div class="input-group input-btn">
-                        <button class="btn">CHECK OUT</button>
+                    <div className="input-group input-btn">
+                        <button className="btn">CHECK AVAILABILITY</button>
                     </div>
-                </form>                
+                </form>
             </section>
 
-            <section class="section-container room-container" id="room">
-                <div class="intro">
-                    <div class="title">
-                        <p class="section-subheader">OUR BEDROOMS</p>
-                        <h2 class="section-header">The Most Memorable Rest Time Starts Here.</h2>
+            <section className="section-container room-container" id="room">
+                <div className="intro">
+                    <div className="title">
+                        <p className="section-subheader">OUR BEDROOMS</p>
+                        <h2 className="section-header">The Most Memorable Rest Time Starts Here.</h2>
                     </div>
-                    <p class="section-description">
-                        Relax in our spacious, business-friendly rooms designed with modern comforts. 
-                        All rooms come with pillow-top mattresses, flat-screen TVs, ergonomic workspaces, 
+                    <p className="section-description">
+                        Relax in our spacious, business-friendly rooms designed with modern comforts.
+                        All rooms come with pillow-top mattresses, flat-screen TVs, ergonomic workspaces,
                         and handicap-accessible options are available.
                     </p>
                 </div>
 
-                <div>
-                    <label for="options">Filter for a Better Selection</label>
-                    <div>
-                        <select id="type" name="options">
-                            <option value="default">-- Room Type --</option>
-                            <option value="standard">Standard</option>
-                            <option value="deluxe">Deluxe</option>
-                            <option value="vip">VIP</option>
-                        </select>
-                        <select id="price" name="options">
-                            <option value="default">-- Price Range --</option>
-                            <option value="standard">Under $199</option>
-                            <option value="deluxe">$199 - $299</option>
-                            <option value="vip">$299 - $399</option>
-                            <option value="vip">Over $399</option>
-                        </select>
-                        <select id="beds" name="options">
-                            <option value="default">-- Number of Beds --</option>
-                            <option value="standard">1 Bed</option>
-                            <option value="deluxe">2 Beds</option>
-                        </select>
-                    </div>
-                
+                <div className="filters">
+                    <label htmlFor="options">Filter for a Better Selection</label>
+                    <select name="type" value={filters.type} onChange={handleFilterChange}>
+                        <option value="">All Types</option>
+                        <option value="STANDARD">Standard</option>
+                        <option value="DELUXE">Deluxe</option>
+                        <option value="VIP">VIP</option>
+                    </select>
+                    <select name="priceRange" value={filters.priceRange} onChange={handleFilterChange}>
+                        <option value="">All Prices</option>
+                        <option value="0-99">Under $100</option>
+                        <option value="100-199">$100 - $199</option>
+                        <option value="200-299">$200 - $299</option>
+                        <option value="300-399">$300 - $399</option>
+                        <option value="400">$400 and above</option>
+                    </select>
+                    <select name="beds" value={filters.beds} onChange={handleFilterChange}>
+                        <option value="">All Beds</option>
+                        <option value="1">1 Bed</option>
+                        <option value="2">2 Beds</option>
+                        <option value="3">3 Beds</option>
+                    </select>
                 </div>
-                
-                <div class="room-grid">
-                    <div class="room-card">
-                        <div class="room-card-image">
-                            <img src={room4} alt="room" />
-                        </div>
-                        <div class="room-card-details">
-                            <h4>Deluxe Ocean View</h4>
-                            <p>
-                                Bask in luxury with breathtaking ocean views from your suite.
-                            </p>
-                            <h5>Starting from <span>$399/night</span></h5>
-                            <button class="btn">Book Now</button>
-                        </div>
-                    </div>
-                    <div class="room-card">
-                        <div class="room-card-image">
-                            <img src={room1} alt="room" />
-                        </div>
-                        <div class="room-card-details">
-                            <h4>Executive Cityscape Room</h4>
-                            <p>
-                                Experience urban elegance and modern comfort in the heart of the city.
-                            </p>
-                            <h5>Starting from <span>$199/night</span></h5>
-                            <button class="btn">Book Now</button>
-                        </div>
-                    </div>
-                    <div class="room-card">
-                        <div class="room-card-image">
-                            <img src={room2} alt="room" />
-                        </div>
-                        <div class="room-card-details">
-                            <h4>Family Garden Retreat</h4>
-                            <p>
-                                Spacious and inviting, perfect for creating lavish cherished memories with loved ones.
-                            </p>
-                            <h5>Starting from <span>$249/night</span></h5>
-                            <button class="btn">Book Now</button>
-                        </div>
-                    </div>
-                    <div class="room-card">
-                        <div class="room-card-image">
-                            <img src={room3} alt="room" />
-                        </div>
-                        <div class="room-card-details">
-                            <h4>Couple Room VIP</h4>
-                            <p>
-                                Enjoy luxury all while spending beautiful moments with your partner in our VIP classic suite.
-                            </p>
-                            <h5>Starting from <span>$299/night</span></h5>
-                            <button class="btn">Book Now</button>
-                        </div>
-                    </div>
-                    <div class="room-card">
-                        <div class="room-card-image">
-                            <img src={room5} alt="room" />
-                        </div>
-                        <div class="room-card-details">
-                            <h4>Deluxe Ocean View</h4>
-                            <p>
-                                Bask in luxury with breathtaking ocean views from your suite.
-                            </p>
-                            <h5>Starting from <span>$399/night</span></h5>
-                            <button class="btn">Book Now</button>
-                        </div>
-                    </div>
-                    <div class="room-card">
-                        <div class="room-card-image">
-                            <img src={room6} alt="room" />
-                        </div>
-                        <div class="room-card-details">
-                            <h4>Executive Cityscape Room</h4>
-                            <p>
-                                Experience urban elegance and modern comfort in the heart of the city.
-                            </p>
-                            <h5>Starting from <span>$199/night</span></h5>
-                            <button class="btn">Book Now</button>
-                        </div>
-                    </div>
-                </div>
-            </section>          
 
+                <div className="room-grid">
+                    {loading ? (
+                        <div className="loading-message">Loading rooms...</div>
+                    ) : error ? (
+                        <div className="error-message">{error}</div>
+                    ) : filteredRooms.length === 0 ? (
+                        <div className="empty-message">No rooms match your selected filters.</div>
+                    ) : (
+                        filteredRooms.map(room => (
+                            <div className="room-card" key={room.id}>
+                                <div className="room-card-image">
+                                    <img src={`http://localhost:8085${room.imageUrl}`} alt={room.name} />
+                                </div>
+                                <div className="room-card-details">
+                                    <h4>{room.name}</h4>
+                                    <p>{room.description}</p>
+                                    <h5>Starting from <span>${room.price}/night</span></h5>
+                                    <button className="btn">Book Now</button>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+            </section>
         </div>
-    )
+    );
 }
 
 export default Rooms;

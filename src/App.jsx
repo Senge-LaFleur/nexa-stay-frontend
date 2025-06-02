@@ -5,7 +5,8 @@ import HomeLayout from './layouts/homeLayout.jsx'
 import Rooms from './pages/rooms/rooms.jsx'
 import Login from './pages/auth/login/login.jsx'
 import Signup from './pages/auth/signup/signup.jsx';
-import Dashboard from './pages/dashboard/dashboard.jsx'
+import Dashboard from './pages/dashboard/dashboard.jsx';
+import RoomsTable from './pages/roomsTable/roomsTable.jsx';
 import Client from './pages/client/client.jsx';
 import Reservation from './pages/reservation/reservation.jsx';
 import Payments from './pages/payments/payments.jsx';
@@ -16,7 +17,7 @@ import './App.css'
 function App() {
 
   return (
-    <div class="body">
+    <div className="body">
 
 
       <Routes>
@@ -24,6 +25,7 @@ function App() {
           <Route index element={<Home />} />
         </Route>
         <Route path="/rooms" element={<Rooms />} />
+        <Route path="/roomsTable" element={<RoomsTable />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/payment" element={<Payment />} />
@@ -34,7 +36,7 @@ function App() {
         <Route path="/logout" element={<Logout />} />
       </Routes>
 
-      
+
     </div>
   )
 
