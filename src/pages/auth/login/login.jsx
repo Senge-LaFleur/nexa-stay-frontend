@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { login } from '../../../api/authApi.js';
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 import './login.css'
@@ -10,34 +10,50 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
             const data = await login(email, password);
-            console.log('Login response:', data); // Debug log
+            console.log('Login response:', data);
 
-            // Store token
             if (data.token) {
                 localStorage.setItem('token', data.token);
-                console.log('User role from response:', data.role); // Debug log
+                localStorage.setItem('user', JSON.stringify({
+                    id: data.id,
+                    role: data.role,
+                    email: data.email
+                }));
 
-                // Role-based redirection
-                const userRole = data.role;
-                console.log('Checking role for redirection:', userRole); // Debug log
-
-                if (userRole === 'ADMIN') {
-                    console.log('Redirecting to dashboard (ADMIN)'); // Debug log
-                    navigate('/dashboard');
-                } else {
-                    console.log('Redirecting to rooms (CLIENT)'); // Debug log
+                // Check for pending booking
+                const pendingBooking = localStorage.getItem('pendingBooking');
+                if (pendingBooking) {
+                    // Remove the pending booking from localStorage
+                    localStorage.removeItem('pendingBooking');
+                    // Redirect back to rooms page to complete the booking
                     navigate('/rooms');
+                    return;
+                }
+
+                // Get the return path from state
+                const returnPath = location.state?.from;
+
+                // If user is ADMIN and there's no specific return path, go to dashboard
+                if (data.role === 'ADMIN' && !returnPath) {
+                    navigate('/dashboard');
+                } else if (returnPath) {
+                    // If there's a return path, use it
+                    navigate(returnPath);
+                } else {
+                    // Default to home page for regular users
+                    navigate('/');
                 }
 
                 alert('Login successful!');
             }
         } catch (err) {
-            console.error('Login error:', err); // Debug log
+            console.error('Login error:', err);
             setError(err.message || 'Error during login');
         }
     };

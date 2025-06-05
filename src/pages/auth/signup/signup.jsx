@@ -39,10 +39,28 @@ const Signup = () => {
             setSuccess('Registration successful!');
 
             if (response.token) {
-                if (formData.role === 'CLIENT') {
+                localStorage.setItem('token', response.token);
+                localStorage.setItem('user', JSON.stringify({
+                    id: response.id,
+                    role: response.role,
+                    email: response.email
+                }));
+
+                // Check for pending booking
+                const pendingBooking = localStorage.getItem('pendingBooking');
+                if (pendingBooking) {
+                    // Remove the pending booking from localStorage
+                    localStorage.removeItem('pendingBooking');
+                    // Redirect back to rooms page to complete the booking
                     navigate('/rooms');
-                } else {
+                    return;
+                }
+
+                // Role-based redirection if no pending booking
+                if (formData.role === 'ADMIN') {
                     navigate('/dashboard');
+                } else {
+                    navigate('/rooms');
                 }
             } else {
                 navigate('/login');
@@ -107,7 +125,7 @@ const Signup = () => {
                     {success && <p style={{ color: 'green', textAlign: 'center' }}>{success}</p>}
                     {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
                     <div className="form-links">
-                    <p><input type="checkbox" />&nbsp;&nbsp;Remember Me</p>
+                        <p><input type="checkbox" />&nbsp;&nbsp;Remember Me</p>
                         <Link to="/login" className="link">
                             <p>Already have an account? <span>Login</span></p>
                         </Link>

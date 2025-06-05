@@ -1,0 +1,234 @@
+:root{
+    --black: #111;
+     --grey: #555;
+     --light-grey-text: #b6bdc6;
+     --white: #fff;
+     --extra-light: #eee;
+     --green: #084846;
+     --light-green: #6ba4a2;
+     --extra-light-green: #e2edeb;
+     --orange: #f4af26;
+     --yellow: #ffd000;
+     --light-yellow: #fff2c6;
+     --pink: #fad4d3;
+     --light-blue: #187fcd;
+     --danger: #f8636f;
+     --success: #41f1b6;
+     --blue-sidebar: #d1f1fd;
+     --color-light: rgba(24, 127, 205, 0.1);
+ 
+     --card-border-radius: 2rem;
+     --border-radius-1: 0.4rem;
+     --border-radius-2: 0.8rem;
+     --border-radius-3: 1.2rem;
+ 
+     --card-padding: 1.8rem;
+     --padding-1: 1.2rem;
+     --max-width: 1200px;
+     --box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+     --box-shadow-1: 0 2rem 3rem var(--color-light);
+ }
+ 
+ 
+ .reviews{
+     font-size: 0.88rem;
+     color: var(--black);
+     width: 100vw;
+     height: 120vh;
+     background: var(--extra-light);
+     user-select: none;
+     overflow: hidden;
+ }
+ 
+ .reviews .container{
+     position: relative;
+     padding-right: 1rem;
+     width: auto;
+     margin-left: 280px;
+     transition: all 0.3s ease;
+     overflow-x: hidden;
+     overflow-y: auto;
+ }
+ 
+ 
+ .reviews .container.collapsed {
+     width: auto;
+     margin-left: 80px;
+     transition: all 0.3s ease;
+ }
+ 
+ 
+ .reviews img{
+     display: block;
+     width: 100%;
+ }
+ 
+ 
+ 
+ 
+ /* ------------------------------ MAIN SECTION ------------------------------- */
+ 
+ .reviews main :is(.section-header){
+     text-align: left;
+     margin-top: 2rem;
+ }
+ 
+ .reviews main .date{
+     display: inline-block;
+     background: var(--extra-light-green);
+     border-radius: var(--border-radius-1);
+     margin-top: 1rem;
+     padding: 0.5rem 1.6rem;
+ }
+ 
+ .reviews main .date input[type="date"]{
+     background: transparent;
+     color: var(--black);
+     border: none;
+     outline: none;
+ }
+ 
+ 
+ 
+ #reviews main .table-data {
+     display: flex;
+     flex-wrap: wrap;
+     grid-gap: 24px;
+     margin-top: 24px;
+     width: 100%;
+     color: var(--black);
+ }
+ #reviews main .table-data > div {
+     border-radius: 20px;
+     background: var(--white);
+     padding: 24px;
+     overflow-x: auto;
+ }
+ #reviews main .table-data .head {
+     display: flex;
+     align-items: center;
+     grid-gap: 16px;
+     margin-bottom: 24px;
+ }
+ #reviews main .table-data .head h3 {
+     margin-right: auto;
+     font-size: 24px;
+     font-weight: 600;
+ }
+ #reviews main .table-data .head span {
+     cursor: pointer;
+     color: var(--green)
+ }
+ 
+ #reviews main .table-data .order {
+     flex-grow: 1;
+     flex-basis: 500px;
+ }
+ #reviews main .table-data .order table {
+     width: 100%;
+     border-collapse: collapse;
+ }
+ #reviews main .table-data .order table th {
+     padding-bottom: 12px;
+     font-size: 13px;
+     text-align: left;
+     border-bottom: 1px solid var(--extra-light);
+ }
+ #reviews main .table-data .order table td {
+     padding: 16px 0;
+ }
+ #reviews main .table-data .order table tr td:first-child {
+     display: flex;
+     align-items: center;
+     grid-gap: 12px;
+     padding-left: 6px;
+ }
+ #reviews main .table-data .order table td img {
+     width: 36px;
+     height: 36px;
+     border-radius: 50%;
+     object-fit: cover;
+ }
+ #reviews main .table-data .order table tbody tr:hover {
+     background: var(--extra-light);
+ }
+ #reviews main .table-data .order table tr td .status {
+     font-size: 10px;
+     padding: 6px 16px;
+     color: var(--white);
+     border-radius: 20px;
+     font-weight: 700;
+ }
+ #reviews main .table-data .order table tr td .status.completed {
+     background: var(--light-green);
+ }
+ #reviews main .table-data .order table tr td .status.process {
+     background: var(--yellow);
+ }
+ #reviews main .table-data .order table tr td .status.pending {
+     background: var(--orange);
+ }
+ 
+ 
+ #reviews main .table-data .todo {
+     flex-grow: 1;
+     flex-basis: 300px;
+ }
+ #reviews main .table-data .todo .todo-list {
+     width: 100%;
+ }
+ #reviews main .table-data .todo .todo-list li {
+     width: 100%;
+     margin-bottom: 16px;
+     background: var(--extra-light);
+     border-radius: 10px;
+     padding: 14px 20px;
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+ }
+ #reviews main .table-data .todo .todo-list li span {
+     cursor: pointer;
+ }
+ #reviews main .table-data .todo .todo-list li.completed {
+     border-left: 10px solid var(--light-green);
+ }
+ #reviews main .table-data .todo .todo-list li.not-completed {
+     border-left: 10px solid var(--orange);
+ }
+ #reviews main .table-data .todo .todo-list li:last-child {
+     margin-bottom: 0;
+ }
+ /* MAIN */
+ /* CONTENT */
+ 
+ 
+ @media screen and (max-width: 768px) {
+ 
+     #reviews {
+         width: 100vw;
+         height: 100vh;
+         left: 200px;
+     }
+ 
+ }
+ 
+ 
+ 
+ @media screen and (max-width: 576px) {
+ 
+     #reviews main .box-info {
+         grid-template-columns: 1fr;
+     }
+     #reviews main .table-data .head {
+         min-width: 420px;
+     }
+     #reviews main .table-data .order table {
+         min-width: 420px;
+     }
+     #reviews main .table-data .todo .todo-list {
+         min-width: 420px;
+     }
+ }
+ 
+ 

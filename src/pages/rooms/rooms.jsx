@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt, faUser } from '@fortawesome/free-solid-svg-icons';
 import Navbar from '../../components/navbar/navbar.jsx';
 import './rooms.css';
 import { getAllRooms } from '../../api/roomApi';
+import { checkRoomAvailability, createReservation } from '../../api/reservationApi';
+import { toast } from 'react-toastify';
 
 function Rooms() {
+    const navigate = useNavigate();
     const [filters, setFilters] = useState({
         type: '',
         priceRange: '',
@@ -15,12 +19,17 @@ function Rooms() {
     const [filteredRooms, setFilteredRooms] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [bookingData, setBookingData] = useState({
+        checkIn: '',
+        checkOut: '',
+        guests: 1
+    });
+    const [availableRooms, setAvailableRooms] = useState(new Set());
 
     useEffect(() => {
         fetchRooms();
     }, []);
 
-    // Apply filters whenever filters or rooms change
     useEffect(() => {
         filterRooms();
     }, [filters, rooms]);
@@ -32,7 +41,7 @@ function Rooms() {
             const response = await getAllRooms();
             if (response.message === "Success") {
                 setRooms(response.data || []);
-                setFilteredRooms(response.data || []); // Initialize filtered rooms with all rooms
+                setFilteredRooms(response.data || []);
             } else {
                 throw new Error(response.message || 'Failed to fetch rooms');
             }
@@ -47,12 +56,10 @@ function Rooms() {
     const filterRooms = () => {
         let result = [...rooms];
 
-        // Filter by room type
         if (filters.type) {
             result = result.filter(room => room.type === filters.type);
         }
 
-        // Filter by price range
         if (filters.priceRange) {
             const [min, max] = filters.priceRange.split('-').map(Number);
             result = result.filter(room => {
@@ -60,13 +67,11 @@ function Rooms() {
                 if (max) {
                     return price >= min && price <= max;
                 } else {
-                    // Handle cases like "400" (400 and above)
                     return price >= min;
                 }
             });
         }
 
-        // Filter by number of beds
         if (filters.beds) {
             result = result.filter(room => room.capacity === Number(filters.beds));
         }
@@ -82,6 +87,100 @@ function Rooms() {
         }));
     };
 
+    const handleBookingDataChange = (e) => {
+        const { id, value } = e.target;
+        setBookingData(prev => ({
+            ...prev,
+            [id === 'guest' ? 'guests' : id === 'check-in' ? 'checkIn' : 'checkOut']: value
+        }));
+    };
+
+    const handleCheckAvailability = async (e) => {
+        e.preventDefault();
+
+        if (!bookingData.checkIn || !bookingData.checkOut || !bookingData.guests) {
+            toast.error('Please fill in all booking details');
+            return;
+        }
+
+        const checkInDate = new Date(bookingData.checkIn);
+        const checkOutDate = new Date(bookingData.checkOut);
+
+        if (checkInDate >= checkOutDate) {
+            toast.error('Check-out date must be after check-in date');
+            return;
+        }
+
+        setLoading(true);
+        const availableRoomIds = new Set();
+
+        try {
+            await Promise.all(filteredRooms.map(async (room) => {
+                try {
+                    const response = await checkRoomAvailability(
+                        room.id,
+                        bookingData.checkIn,
+                        bookingData.checkOut
+                    );
+                    if (response.available && room.capacity >= bookingData.guests) {
+                        availableRoomIds.add(room.id);
+                    }
+                } catch (error) {
+                    console.error(`Error checking availability for room ${room.id}:`, error);
+                }
+            }));
+
+            setAvailableRooms(availableRoomIds);
+            toast.success('Availability check complete!');
+        } catch (error) {
+            toast.error('Error checking room availability');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleBookNow = async (roomId) => {
+        // Check if user is authenticated
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user) {
+            // Save booking data to localStorage
+            localStorage.setItem('pendingBooking', JSON.stringify({
+                roomId,
+                ...bookingData
+            }));
+            // Redirect to login
+            navigate('/login');
+            return;
+        }
+
+        try {
+            const response = await createReservation({
+                userId: user.id,
+                roomId,
+                checkInDate: bookingData.checkIn,
+                checkOutDate: bookingData.checkOut,
+                numberOfGuests: bookingData.guests
+            });
+
+            if (response) {
+                toast.success('Booking successful! 🎉');
+                // Clear booking data
+                setBookingData({
+                    checkIn: '',
+                    checkOut: '',
+                    guests: 1
+                });
+                setAvailableRooms(new Set());
+
+                // Redirect to reservations page
+                navigate('/reservation');
+            }
+        } catch (error) {
+            console.error('Error creating reservation:', error);
+            toast.error(error.message || 'Error creating reservation');
+        }
+    };
+
     return (
         <div className="rooms">
             <section className="room-header">
@@ -93,30 +192,53 @@ function Rooms() {
             </section>
 
             <section className="section-container booking-container">
-                <form action="/" className="booking-form">
+                <form onSubmit={handleCheckAvailability} className="booking-form">
                     <div className="input-group">
                         <span><FontAwesomeIcon icon={faCalendarAlt} /></span>
                         <div>
                             <label htmlFor="check-in">CHECK-IN</label>
-                            <input type="date" id="check-in" placeholder="Check In" />
+                            <input
+                                type="date"
+                                id="check-in"
+                                value={bookingData.checkIn}
+                                onChange={handleBookingDataChange}
+                                min={new Date().toISOString().split('T')[0]}
+                                required
+                            />
                         </div>
                     </div>
                     <div className="input-group">
                         <span><FontAwesomeIcon icon={faCalendarAlt} /></span>
                         <div>
                             <label htmlFor="check-out">CHECK-OUT</label>
-                            <input type="date" id="check-out" placeholder="Check Out" />
+                            <input
+                                type="date"
+                                id="check-out"
+                                value={bookingData.checkOut}
+                                onChange={handleBookingDataChange}
+                                min={bookingData.checkIn || new Date().toISOString().split('T')[0]}
+                                required
+                            />
                         </div>
                     </div>
                     <div className="input-group">
                         <span><FontAwesomeIcon icon={faUser} /></span>
                         <div>
                             <label htmlFor="guest">GUESTS</label>
-                            <input type="number" id="guest" placeholder="Guests" min="1" />
+                            <input
+                                type="number"
+                                id="guest"
+                                value={bookingData.guests}
+                                onChange={handleBookingDataChange}
+                                min="1"
+                                required
+                            />
                         </div>
                     </div>
                     <div className="input-group input-btn">
-                        <button className="btn">CHECK AVAILABILITY</button>
+                        <button type="submit" className="btn" disabled={loading}>
+                            {loading ? 'Checking...' : 'CHECK AVAILABILITY'}
+                        </button>
                     </div>
                 </form>
             </section>
@@ -175,7 +297,13 @@ function Rooms() {
                                     <h4>{room.name}</h4>
                                     <p>{room.description}</p>
                                     <h5>Starting from <span>${room.price}/night</span></h5>
-                                    <button className="btn">Book Now</button>
+                                    <button
+                                        className={`btn ${!availableRooms.has(room.id) ? 'disabled' : ''}`}
+                                        onClick={() => handleBookNow(room.id)}
+                                        disabled={!availableRooms.has(room.id)}
+                                    >
+                                        {availableRooms.has(room.id) ? 'Book Now' : 'Not Available'}
+                                    </button>
                                 </div>
                             </div>
                         ))

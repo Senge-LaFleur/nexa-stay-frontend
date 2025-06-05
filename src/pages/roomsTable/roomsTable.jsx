@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faFilter, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faFilter, faTimes, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 import Sidebar from '../../components/sidebar/sidebar.jsx'
 import Navbar2 from '../../components/navbar2/navbar2.jsx';
 import bedroom1 from '../../assets/images/bedroom1.jpg'
 import './roomsTable.css'
-import { createRoom, getAllRooms, getRoomsByType, getRoomsByPrice, getRoomsByCapacity, deleteRoom } from '../../api/roomApi';
+import { createRoom, getAllRooms, getRoomsByType, getRoomsByPrice, getRoomsByCapacity, deleteRoom, updateRoom } from '../../api/roomApi';
 
 function RoomsTable() {
     const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
@@ -34,6 +34,9 @@ function RoomsTable() {
         numberOfBeds: '',
         status: ''
     });
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editingRoom, setEditingRoom] = useState(null);
+    const [editImagePreview, setEditImagePreview] = useState(null);
 
     const toggleSidebar = () => {
         setIsSidebarExpanded(prev => !prev);
@@ -272,13 +275,98 @@ function RoomsTable() {
         }
     };
 
+    const handleEditClick = (room) => {
+        setEditingRoom({
+            ...room,
+            image: null // Reset image since we don't want to send the URL as file
+        });
+        setEditImagePreview(room.imageUrl);
+        setShowEditModal(true);
+    };
+
+    const handleEditInputChange = (e) => {
+        const { name, value, type } = e.target;
+        setEditingRoom(prev => ({
+            ...prev,
+            [name]: type === 'number' && name !== 'name' ? Number(value) : value
+        }));
+    };
+
+    const handleEditImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Image size should be less than 5MB');
+                e.target.value = null;
+                return;
+            }
+
+            if (!file.type.startsWith('image/')) {
+                alert('Please upload an image file');
+                e.target.value = null;
+                return;
+            }
+
+            setEditingRoom(prev => ({
+                ...prev,
+                image: file
+            }));
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setEditImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleEditSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!editingRoom.name.trim()) {
+            alert('Room name is required');
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const formData = new FormData();
+            formData.append('name', editingRoom.name);
+            formData.append('type', editingRoom.type);
+            formData.append('description', editingRoom.description);
+            formData.append('price', editingRoom.price);
+            formData.append('capacity', editingRoom.numberOfBeds);
+            formData.append('status', editingRoom.status);
+
+            if (editingRoom.image instanceof File) {
+                formData.append('image', editingRoom.image);
+            }
+
+            const response = await updateRoom(editingRoom.id, formData);
+
+            if (response.message === "Success") {
+                await fetchRooms();
+                setShowEditModal(false);
+                setEditingRoom(null);
+                alert('Room updated successfully! ✅');
+            } else {
+                throw new Error(response.message || 'Failed to update room');
+            }
+        } catch (error) {
+            console.error('Error updating room:', error);
+            alert('Failed to update room. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <div class="roomsTable" id="roomsTable">
+        <div className="roomsTable" id="roomsTable">
             {/* ------------------------------ SIDEBAR ------------------------------- */}
             <Sidebar isExpanded={isSidebarExpanded} toggleSidebar={toggleSidebar} isMobile={isMobile} />
 
             <div
-                class={`container ${isSidebarExpanded ? 'expanded' : 'collapsed'}`}
+                className={`container ${isSidebarExpanded ? 'expanded' : 'collapsed'}`}
                 style={
                     {
                         marginLeft: !isMobile && isSidebarExpanded ?
@@ -290,16 +378,16 @@ function RoomsTable() {
                 {/* ------------------------------ MAIN SECTION ------------------------------- */}
                 <main>
                     <Navbar2 />
-                    <h2 class="section-header">Rooms</h2>
-                    <div class="date">
+                    <h2 className="section-header">Rooms</h2>
+                    <div className="date">
                         <input type="date" />
                     </div>
 
                     {/* Room Creation Form */}
-                    <div class="create-room-section">
+                    <div className="create-room-section">
                         <h3>Create A New Room</h3>
-                        <form onSubmit={handleSubmit} class="create-room-form">
-                            <div class="form-row">
+                        <form onSubmit={handleSubmit} className="create-room-form">
+                            <div className="form-row">
                                 <input
                                     type="text"
                                     name="name"
@@ -328,7 +416,7 @@ function RoomsTable() {
                                     required
                                 />
                             </div>
-                            <div class="form-row">
+                            <div className="form-row">
                                 <input
                                     type="number"
                                     name="numberOfBeds"
@@ -338,24 +426,24 @@ function RoomsTable() {
                                     min="1"
                                     required
                                 />
-                                <div class="image-upload-container">
+                                <div className="image-upload-container">
                                     <input
                                         type="file"
                                         name="image"
                                         onChange={handleImageChange}
                                         accept="image/*"
                                         required
-                                        class="image-input"
+                                        className="image-input"
                                     />
                                     {imagePreview && (
-                                        <div class="image-preview">
+                                        <div className="image-preview">
                                             <img src={imagePreview} alt="Room preview" />
                                         </div>
                                     )}
                                 </div>
                             </div>
 
-                            <div class="form-row">
+                            <div className="form-row">
                                 <input
                                     type="text"
                                     name="description"
@@ -366,15 +454,15 @@ function RoomsTable() {
                                     style={{ width: '100%' }}
                                 />
                             </div>
-                            <button type="submit" class="btn">Create Room</button>
+                            <button type="submit" className="btn">Create Room</button>
                         </form>
                     </div>
 
-                    <div class="table-data">
-                        <div class="order">
-                            <div class="head">
+                    <div className="table-data">
+                        <div className="order">
+                            <div className="head">
                                 <h3>All NexaStay Rooms</h3>
-                                <div class="table-actions">
+                                <div className="table-actions">
                                     <span onClick={handleSearchClick}>
                                         <FontAwesomeIcon icon={faSearch} />
                                     </span>
@@ -385,7 +473,7 @@ function RoomsTable() {
                             </div>
 
                             {showSearch && (
-                                <div class="search-bar">
+                                <div className="search-bar">
                                     <input
                                         type="text"
                                         placeholder="Search rooms..."
@@ -396,8 +484,8 @@ function RoomsTable() {
                             )}
 
                             {showFilters && (
-                                <div class="filter-section">
-                                    <div class="filter-row">
+                                <div className="filter-section">
+                                    <div className="filter-row">
                                         <select
                                             name="type"
                                             value={filters.type}
@@ -442,7 +530,7 @@ function RoomsTable() {
                                             <option value="unavailable">Not Available</option>
                                         </select>
 
-                                        <button onClick={clearFilters} class="clear-filters">
+                                        <button onClick={clearFilters} className="clear-filters">
                                             <FontAwesomeIcon icon={faTimes} /> Clear Filters
                                         </button>
                                     </div>
@@ -450,9 +538,9 @@ function RoomsTable() {
                             )}
 
                             {loading ? (
-                                <div class="loading-message">Loading rooms...</div>
+                                <div className="loading-message">Loading rooms...</div>
                             ) : error ? (
-                                <div class="error-message">{error}</div>
+                                <div className="error-message">{error}</div>
                             ) : (
                                 <table>
                                     <thead>
@@ -500,6 +588,13 @@ function RoomsTable() {
                                                     </td>
                                                     <td>
                                                         <button
+                                                            className="edit-btn"
+                                                            onClick={() => handleEditClick(room)}
+                                                            title="Edit Room"
+                                                        >
+                                                            <FontAwesomeIcon icon={faEdit} />
+                                                        </button>
+                                                        <button
                                                             className="delete-btn"
                                                             onClick={() => handleDeleteRoom(room.id, room.name)}
                                                             title="Delete Room"
@@ -517,6 +612,111 @@ function RoomsTable() {
                     </div>
                 </main>
             </div>
+
+            {/* Edit Modal */}
+            {showEditModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h2>Edit Room</h2>
+                        <form onSubmit={handleEditSubmit}>
+                            <div className="form-group">
+                                <label>Name:</label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={editingRoom.name}
+                                    onChange={handleEditInputChange}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Type:</label>
+                                <select
+                                    name="type"
+                                    value={editingRoom.type}
+                                    onChange={handleEditInputChange}
+                                >
+                                    <option value="STANDARD">Standard</option>
+                                    <option value="DELUXE">Deluxe</option>
+                                    <option value="VIP">VIP</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label>Description:</label>
+                                <textarea
+                                    name="description"
+                                    value={editingRoom.description}
+                                    onChange={handleEditInputChange}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Price:</label>
+                                <input
+                                    type="number"
+                                    name="price"
+                                    value={editingRoom.price}
+                                    onChange={handleEditInputChange}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Capacity:</label>
+                                <input
+                                    type="number"
+                                    name="numberOfBeds"
+                                    value={editingRoom.capacity}
+                                    onChange={handleEditInputChange}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Status:</label>
+                                <select
+                                    name="status"
+                                    value={editingRoom.status}
+                                    onChange={handleEditInputChange}
+                                >
+                                    <option value="AVAILABLE">Available</option>
+                                    <option value="OCCUPIED">Occupied</option>
+                                    <option value="MAINTENANCE">Maintenance</option>
+                                    <option value="CLEANING">Cleaning</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label>Image:</label>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleEditImageChange}
+                                />
+                                {editImagePreview && (
+                                    <img
+                                        src={editImagePreview}
+                                        alt="Room preview"
+                                        className="image-preview"
+                                        style={{ maxWidth: '200px', marginTop: '10px' }}
+                                    />
+                                )}
+                            </div>
+                            <div className="modal-actions">
+                                <button type="submit" className="save-btn btn">
+                                    Save Changes
+                                </button>
+                                <button
+                                    type="button"
+                                    className="cancel-btn btn"
+                                    onClick={() => {
+                                        setShowEditModal(false);
+                                        setEditingRoom(null);
+                                    }}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

@@ -34,7 +34,7 @@
     font-size: 0.88rem;
     color: var(--black);
     width: 100vw;
-    height: 100vh;
+    height: fit-content;
     background: var(--extra-light);
     user-select: none;
     overflow: hidden;

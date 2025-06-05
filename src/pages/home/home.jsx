@@ -1,25 +1,30 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import ScrollReveal from 'scrollreveal';
 import about from '../../assets/images/about.jpg';
 import lobby2 from '../../assets/images/lobby2.jpg';
 import lobby4 from '../../assets/images/lobby4.jpg';
 import lobby5 from '../../assets/images/lobby5.jpg';
 import lobby6 from '../../assets/images/lobby6.jpg';
-import profile1 from '../../assets/images/profile1.jpg';
-import profile2 from '../../assets/images/profile2.jpg';
-import profile3 from '../../assets/images/profile3.jpg';
-import profile4 from '../../assets/images/profile4.jpg';
-import profile5 from '../../assets/images/profile5.jpg';
-import profile6 from '../../assets/images/profile6.jpg';
 import 'swiper/css';
 import 'swiper/css/autoplay';
-import './home.css'
 import ImageSlider from '../../components/imageSlider/imageSlider.jsx';
+import './home.css'
+import { useAuth } from '../../context/AuthContext';
+import { submitReview, getLatestReviews } from '../../api/reviewApi';
 
 function Home() {
     const [showMessage, setShowMessage] = useState(false);
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState('');
+    const [photo, setPhoto] = useState(null);
+    const [reviews, setReviews] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [hoverRating, setHoverRating] = useState(0);
+    const { user, isAuthenticated } = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const toggleMessage = () => {
         setShowMessage(!showMessage)
@@ -27,6 +32,244 @@ function Home() {
 
     const images = [lobby2, lobby5, lobby4, about, lobby6];
 
+    useEffect(() => {
+        fetchReviews();
+
+        // Check for pending review in sessionStorage after login
+        const pendingReview = sessionStorage.getItem('pendingReview');
+        if (pendingReview && isAuthenticated && user) {
+            const reviewData = JSON.parse(pendingReview);
+            submitPendingReview(reviewData);
+            sessionStorage.removeItem('pendingReview');
+        }
+    }, [isAuthenticated, user]);
+
+    const fetchReviews = async () => {
+        try {
+            const reviewsData = await getLatestReviews();
+            setReviews(reviewsData);
+        } catch (error) {
+            console.error('Error fetching reviews:', error);
+            if (error.response?.status === 401) {
+                // Handle unauthorized access
+                localStorage.removeItem('token');
+                navigate('/login', { state: { from: '/' } });
+            }
+        }
+    };
+
+    const submitPendingReview = async (reviewData) => {
+        try {
+            setIsLoading(true);
+            console.log('Submitting pending review with user:', user); // Debug log
+            console.log('Auth context in pending review:', { isAuthenticated, user }); // Debug log
+
+            const completeReviewData = {
+                ...reviewData,
+                userId: user.id
+            };
+            console.log('Complete review data:', completeReviewData); // Debug log
+
+            const response = await submitReview(completeReviewData);
+            console.log('Pending review submitted successfully:', response);
+
+            // Reset form
+            setRating(0);
+            setComment('');
+            setPhoto(null);
+
+            // Show success message
+            alert('Review submitted successfully!');
+
+            // Refresh reviews
+            await fetchReviews();
+        } catch (error) {
+            console.error('Error submitting pending review:', error);
+            console.error('Error details:', { // Debug log
+                response: error.response,
+                message: error.message,
+                user: user,
+                isAuthenticated: isAuthenticated
+            });
+            alert('Error submitting review. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleReviewSubmit = async (e) => {
+        e.preventDefault();
+
+        console.log('Auth context at review submission:', { isAuthenticated, user });
+
+        if (!isAuthenticated || !user || !user.id) {
+            console.log('User not properly authenticated:', { isAuthenticated, user });
+            // Save review data to sessionStorage before redirecting
+            const reviewData = {
+                roomId: 1,
+                rating,
+                comment,
+                photo
+            };
+            sessionStorage.setItem('pendingReview', JSON.stringify(reviewData));
+
+            alert('Please log in to submit a review');
+            navigate('/login', {
+                state: {
+                    from: '/',
+                    scrollToReviews: true
+                }
+            });
+            return;
+        }
+
+        if (rating === 0) {
+            alert('Please select a rating');
+            return;
+        }
+
+        if (!photo) {
+            alert('Please upload a photo');
+            return;
+        }
+
+        try {
+            setIsLoading(true);
+            console.log('User data before submission:', {
+                userId: user.id,
+                userEmail: user.email,
+                isAuthenticated
+            });
+
+            const reviewData = {
+                userId: user.id,
+                roomId: 1,
+                rating,
+                comment,
+                photo
+            };
+
+            console.log('Review data before submission:', {
+                ...reviewData,
+                photoSize: photo.length
+            });
+
+            await submitReview(reviewData);
+            console.log('Review submitted successfully');
+
+            // Reset form
+            setRating(0);
+            setComment('');
+            setPhoto(null);
+
+            // Show success message
+            alert('Review submitted successfully!');
+
+            // Refresh reviews
+            await fetchReviews();
+        } catch (error) {
+            console.error('Error submitting review:', error);
+            console.error('Error details:', {
+                status: error.response?.status,
+                data: error.response?.data,
+                userId: user?.id,
+                isAuthenticated
+            });
+
+            if (error.response?.status === 401) {
+                // Save review data and clear auth state
+                sessionStorage.setItem('pendingReview', JSON.stringify({
+                    roomId: 1,
+                    rating,
+                    comment,
+                    photo
+                }));
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                alert('Please log in again to submit your review.');
+                navigate('/login', {
+                    state: {
+                        from: '/',
+                        scrollToReviews: true
+                    }
+                });
+            } else {
+                alert('Error submitting review. Please try again.');
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handlePhotoChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                alert('Image size should be less than 5MB');
+                e.target.value = null;
+                return;
+            }
+
+            if (!file.type.startsWith('image/')) {
+                alert('Please upload an image file');
+                e.target.value = null;
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                // Create an image element to get dimensions
+                const img = new Image();
+                img.onload = () => {
+                    // Create a canvas to resize the image if needed
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    // Maximum dimensions
+                    const MAX_WIDTH = 800;
+                    const MAX_HEIGHT = 800;
+
+                    // Calculate new dimensions while maintaining aspect ratio
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    // Set canvas dimensions
+                    canvas.width = width;
+                    canvas.height = height;
+
+                    // Draw and compress image
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Convert to base64 with compression
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    setPhoto(compressedBase64);
+                };
+                img.src = reader.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    useEffect(() => {
+        // Scroll to reviews section if coming back from login
+        if (location.state?.scrollToReviews) {
+            const reviewSection = document.querySelector('.review');
+            if (reviewSection) {
+                reviewSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    }, [location]);
 
     return (
         <div class="home">
@@ -39,19 +282,19 @@ function Home() {
                     <p class="section-subheader">ABOUT US</p>
                     <h2 class="section-header">The Best Holidays Start Here !</h2>
                     <p class="section-description">
-                        Discover your perfect stay with our hotel booking website! Easily browse, compare, and 
-                        book hotels based on location, price, and amenities. With real-time availability and secure 
-                        payment options, planning your next getaway has never been easier. Book now and enjoy 
+                        Discover your perfect stay with our hotel booking website! Easily browse, compare, and
+                        book hotels based on location, price, and amenities. With real-time availability and secure
+                        payment options, planning your next getaway has never been easier. Book now and enjoy
                         a seamless travel experience!
                     </p>
                     {showMessage && (
                         <p class="section-description" id="hidden">
                             Nexa Stay offers a comfortable and modern lodging experience with services
-                             designed to meet the needs of both leisure and business travelers. Guests 
-                             can enjoy high-speed Wi-Fi, secure car parking, pet-friendly accommodations, 
-                             and a 24/7 front desk for personalized assistance. The hotel also features clean, 
-                             stylish rooms, daily housekeeping, and convenient access to local attractions, making 
-                             every stay relaxed, connected, and hassle-free.
+                            designed to meet the needs of both leisure and business travelers. Guests
+                            can enjoy high-speed Wi-Fi, secure car parking, pet-friendly accommodations,
+                            and a 24/7 front desk for personalized assistance. The hotel also features clean,
+                            stylish rooms, daily housekeeping, and convenient access to local attractions, making
+                            every stay relaxed, connected, and hassle-free.
                         </p>
                     )}
                     <button class="btn about-btn" onClick={toggleMessage}>{showMessage ? 'Hide' : 'Learn More'}</button>
@@ -84,8 +327,8 @@ function Home() {
                     <p class="section-subheader">OUR ROOMS</p>
                     <h2 class="section-header">Relax In Style.</h2>
                     <p class="section-description">
-                        Relax in our spacious, business-friendly rooms designed with modern comforts. 
-                        All rooms come with pillow-top mattresses, flat-screen TVs, ergonomic workspaces, 
+                        Relax in our spacious, business-friendly rooms designed with modern comforts.
+                        All rooms come with pillow-top mattresses, flat-screen TVs, ergonomic workspaces,
                         and handicap-accessible options are available.
                     </p>
                     <button class="btn">Visit Our Rooms</button>
@@ -142,95 +385,103 @@ function Home() {
                         <h3>View More <FontAwesomeIcon icon={['fas', 'fa-arrow-right']} /></h3>
                     </Link>
                 </div>
-                
+
             </section>
 
             <section class="review">
                 <div class="section-container review-container">
                     <p class="section-subheader">OUR REVIEWS</p>
                     <h2 class="section-header">What our Clients Say</h2>
-                    <div class="review-grid">
-                        <div class="review-card">
-                            <img src={profile1} alt="review-profile" />
-                            <div class="star">
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star-half-alt']} id="half-star" />
+
+                    {/* Review Form */}
+                    <div className="review-form">
+                        <h3>Share Your Experience</h3>
+                        <form onSubmit={handleReviewSubmit}>
+                            <div className="form-group">
+                                <label>Your Photo (Required)</label>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handlePhotoChange}
+                                    required
+                                />
+                                {photo && (
+                                    <img
+                                        src={photo}
+                                        alt="Preview"
+                                        style={{
+                                            width: '100px',
+                                            height: '100px',
+                                            objectFit: 'cover',
+                                            marginTop: '10px',
+                                            borderRadius: '50%'
+                                        }}
+                                    />
+                                )}
                             </div>
-                            <p>The booking process was seamless, and the confirmation was instant.
-                                I highly recommend NexaStay for hassle-free hotel bookings.
-                            </p>
-                        </div>
-                        <div class="review-card">
-                            <img src={profile2} alt="review-profile" />
-                            <div class="star">
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star-half-alt']} id="half-star" />
+                            <div className="form-group">
+                                <label>Rating (Required)</label>
+                                <div className="rating-input">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <FontAwesomeIcon
+                                            key={star}
+                                            icon={['fas', (hoverRating || rating) >= star ? 'star' : 'star']}
+                                            onClick={() => setRating(star)}
+                                            onMouseEnter={() => setHoverRating(star)}
+                                            onMouseLeave={() => setHoverRating(0)}
+                                            style={{
+                                                cursor: 'pointer',
+                                                color: (hoverRating || rating) >= star ? 'var(--yellow)' : '#e4e5e9',
+                                                fontSize: '2rem',
+                                                marginRight: '0.5rem',
+                                                transition: 'color 200ms'
+                                            }}
+                                        />
+                                    ))}
+                                    <span style={{ marginLeft: '1rem', color: 'var(--black)' }}>
+                                        {rating ? `${rating} out of 5` : 'Select a rating'}
+                                    </span>
+                                </div>
                             </div>
-                            <p>The booking process was seamless, and the confirmation was instant.
-                                I highly recommend NexaStay for hassle-free hotel bookings.
-                            </p>
-                        </div>
-                        <div class="review-card">
-                            <img src={profile3} alt="review-profile" />
-                            <div class="star">
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star-half-alt']} id="half-star" />
+                            <div className="form-group">
+                                <label>Comment (Optional)</label>
+                                <textarea
+                                    value={comment}
+                                    onChange={(e) => setComment(e.target.value)}
+                                    placeholder="Share your experience..."
+                                    rows="4"
+                                />
                             </div>
-                            <p>The booking process was seamless, and the confirmation was instant.
-                                I highly recommend NexaStay for hassle-free hotel bookings.
-                            </p>
-                        </div>
-                        <div class="review-card">
-                            <img src={profile4} alt="review-profile" />
-                            <div class="star">
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star-half-alt']} id="half-star" />
+                            <button
+                                type="submit"
+                                id="submit-review"
+                                className="btn"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? 'Submitting...' : 'Submit Review'}
+                            </button>
+                        </form>
+                    </div>
+
+                    <div className="review-grid">
+                        {reviews.map((review, index) => (
+                            <div className="review-card" key={review.id || index}>
+                                <img src={review.photo} alt="review-profile" />
+                                <div className="star">
+                                    {[...Array(5)].map((_, i) => (
+                                        <FontAwesomeIcon
+                                            key={i}
+                                            icon={['fas', i < review.rating ? 'fa-star' : 'fa-star-o']}
+                                            style={{ color: 'var(--yellow)' }}
+                                        />
+                                    ))}
+                                </div>
+                                <p>{review.comment}</p>
                             </div>
-                            <p>The booking process was seamless, and the confirmation was instant.
-                                I highly recommend NexaStay for hassle-free hotel bookings.
-                            </p>
-                        </div>
-                        <div class="review-card">
-                            <img src={profile5} alt="review-profile" />
-                            <div class="star">
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star-half-alt']} id="half-star" />
-                            </div>
-                            <p>The booking process was seamless, and the confirmation was instant.
-                                I highly recommend NexaStay for hassle-free hotel bookings.
-                            </p>
-                        </div>
-                        <div class="review-card">
-                            <img src={profile6} alt="review-profile" />
-                            <div class="star">
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star']} />
-                                <FontAwesomeIcon icon={['fas','fa-star-half-alt']} id="half-star" />
-                            </div>
-                            <p>The booking process was seamless, and the confirmation was instant.
-                                I highly recommend NexaStay for hassle-free hotel bookings.
-                            </p>
-                        </div>
+                        ))}
                     </div>
                 </div>
-            </section>            
+            </section>
 
         </div>
     )
