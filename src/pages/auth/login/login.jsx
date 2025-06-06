@@ -9,64 +9,33 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const { login } = useAuth();
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        setError('');
+        setIsLoading(true);
+
         try {
             const data = await login(email, password);
             console.log('Login response:', data);
 
-            // Check for pending review before navigation
-            const pendingReview = sessionStorage.getItem('pendingReview');
-            console.log('Checking for pending review after login:', {
-                hasPendingReview: !!pendingReview,
-                pendingReviewData: pendingReview ? JSON.parse(pendingReview) : null
-            });
-
             // Small delay to ensure state updates are processed
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 100));
 
-            if (pendingReview) {
-                console.log('Found pending review, navigating to home with processPendingReview flag');
-                // Navigate back to home with a flag to process the review
-                navigate('/', {
-                    state: {
-                        processPendingReview: true,
-                        scrollToReviews: true
-                    },
-                    replace: true
-                });
-                return;
-            }
+            // Get the return path from state or use default based on role
+            const returnPath = location.state?.from || (data.role === 'ADMIN' ? '/dashboard' : '/rooms');
 
-            // Get the return path from state
-            const returnPath = location.state?.from;
-            console.log('Navigation state:', {
-                returnPath,
-                locationState: location.state
-            });
-
-            // Handle navigation based on role and return path
-            if (data.role === 'ADMIN' && !returnPath) {
-                navigate('/dashboard', { replace: true });
-            } else if (returnPath) {
-                navigate(returnPath, {
-                    state: {
-                        scrollToReviews: location.state?.scrollToReviews
-                    },
-                    replace: true
-                });
-            } else {
-                navigate('/', { replace: true });
-            }
-
-            alert('Login successful!');
+            // Navigate to the appropriate page
+            navigate(returnPath, { replace: true });
         } catch (err) {
             console.error('Login error:', err);
             setError(err.message || 'Error during login');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -77,20 +46,33 @@ const Login = () => {
                 <div className="login-content">
                     <div className="box-container">
                         <span><FontAwesomeIcon icon={faEnvelope} /></span>
-                        <input className="box" type="email" value={email}
+                        <input
+                            className="box"
+                            type="email"
+                            value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Enter your Email" required
+                            placeholder="Enter your Email"
+                            required
+                            disabled={isLoading}
                         />
                     </div>
                     <div className="box-container">
                         <span><FontAwesomeIcon icon={faLock} /></span>
-                        <input className="box" type="password" value={password}
+                        <input
+                            className="box"
+                            type="password"
+                            value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter your Password" minLength="8" required
+                            placeholder="Enter your Password"
+                            minLength="8"
+                            required
+                            disabled={isLoading}
                         />
                     </div>
                     <div className="buttons">
-                        <button className="btn" type="submit">Log in</button>
+                        <button className="btn" type="submit" disabled={isLoading}>
+                            {isLoading ? 'Logging in...' : 'Log in'}
+                        </button>
                         {error && <p style={{ color: 'red' }}>{error}</p>}
                         <Link to="/" className="link btn">Cancel</Link>
                     </div>

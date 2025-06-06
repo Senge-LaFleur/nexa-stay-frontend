@@ -171,6 +171,10 @@
     background-color: var(--yellow);
 }
 
+#book-now-btn {
+    width: 100%;
+}
+
 .room-container .filters {
     margin: 2rem 0;
     padding: 1.5rem;

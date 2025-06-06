@@ -558,13 +558,13 @@ function RoomsTable() {
                                     <tbody>
                                         {rooms.length === 0 ? (
                                             <tr>
-                                                <td colspan="8" className="empty-message">
+                                                <td colSpan="8" className="empty-message">
                                                     No rooms available. Use the form above to create a new room.
                                                 </td>
                                             </tr>
                                         ) : filteredRooms.length === 0 ? (
                                             <tr>
-                                                <td colspan="8" className="empty-message">
+                                                <td colSpan="8" className="empty-message">
                                                     No rooms match the current filters.
                                                 </td>
                                             </tr>
@@ -580,7 +580,7 @@ function RoomsTable() {
                                                     <td>
                                                         <div className="room-image-container">
                                                             <img
-                                                                src={`http://localhost:8085${room.imageUrl}`}
+                                                                src={`http://localhost:8081${room.imageUrl}`}
                                                                 alt={`Room ${room.name}`}
                                                                 className="room-table-image"
                                                             />

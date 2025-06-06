@@ -131,7 +131,12 @@ function Rooms() {
             }));
 
             setAvailableRooms(availableRoomIds);
-            toast.success('Availability check complete!');
+
+            if (availableRoomIds.size > 0) {
+                toast.success(`Found ${availableRoomIds.size} available rooms for your dates! 🎉`);
+            } else {
+                toast.info('No rooms available for the selected dates. Try different dates or adjust your search.');
+            }
         } catch (error) {
             toast.error('Error checking room availability');
         } finally {
@@ -140,6 +145,12 @@ function Rooms() {
     };
 
     const handleBookNow = async (roomId) => {
+        // Check if dates are selected
+        if (!bookingData.checkIn || !bookingData.checkOut) {
+            toast.warning('Please select check-in and check-out dates first');
+            return;
+        }
+
         // Check if user is authenticated
         const user = JSON.parse(localStorage.getItem('user'));
         if (!user) {
@@ -154,6 +165,18 @@ function Rooms() {
         }
 
         try {
+            // Check availability before proceeding with booking
+            const availabilityResponse = await checkRoomAvailability(
+                roomId,
+                bookingData.checkIn,
+                bookingData.checkOut
+            );
+
+            if (!availabilityResponse.available) {
+                toast.error('Sorry, this room is no longer available for the selected dates');
+                return;
+            }
+
             const response = await createReservation({
                 userId: user.id,
                 roomId,
@@ -291,18 +314,18 @@ function Rooms() {
                         filteredRooms.map(room => (
                             <div className="room-card" key={room.id}>
                                 <div className="room-card-image">
-                                    <img src={`http://localhost:8085${room.imageUrl}`} alt={room.name} />
+                                    <img src={`http://localhost:8081${room.imageUrl}`} alt={room.name} />
                                 </div>
                                 <div className="room-card-details">
                                     <h4>{room.name}</h4>
                                     <p>{room.description}</p>
                                     <h5>Starting from <span>${room.price}/night</span></h5>
                                     <button
-                                        className={`btn ${!availableRooms.has(room.id) ? 'disabled' : ''}`}
+                                        className="btn" id="book-now-btn"
                                         onClick={() => handleBookNow(room.id)}
-                                        disabled={!availableRooms.has(room.id)}
+                                        disabled={!bookingData.checkIn || !bookingData.checkOut}
                                     >
-                                        {availableRooms.has(room.id) ? 'Book Now' : 'Not Available'}
+                                        {!bookingData.checkIn || !bookingData.checkOut ? 'Select Dates to Book' : 'Book Now'}
                                     </button>
                                 </div>
                             </div>

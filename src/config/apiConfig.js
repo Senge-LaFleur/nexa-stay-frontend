@@ -7,6 +7,13 @@ export const API_CONFIG = {
     REVIEW_SERVICE: '/api/reviews'
 };
 
+// API Base URLs for different services
+export const SERVICE_URLS = {
+    AUTH_SERVICE: 'http://localhost:8080',
+    ROOM_SERVICE: 'http://localhost:8085',
+    // MEDIA_SERVICE: 'http://localhost:8085'
+};
+
 // Common headers
 export const COMMON_HEADERS = {
     'Content-Type': 'application/json',

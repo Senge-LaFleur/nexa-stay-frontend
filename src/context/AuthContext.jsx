@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import apiClient from '../api/apiClient';
+import { API_CONFIG } from '../config/apiConfig';
 
 export const AuthContext = createContext();
 
@@ -15,121 +15,110 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(true);
 
+    // Initialize auth state from localStorage
     useEffect(() => {
-        // Check if user data exists in localStorage
-        const storedUser = localStorage.getItem('user');
-        const token = localStorage.getItem('token');
-
-        console.log('AuthProvider: Checking stored credentials:', {
-            hasStoredUser: !!storedUser,
-            hasToken: !!token
-        });
-
-        if (storedUser && token) {
+        const initializeAuth = () => {
             try {
-                const userData = JSON.parse(storedUser);
-                console.log('AuthProvider: Parsed stored user data:', userData);
+                const storedUser = localStorage.getItem('user');
+                const token = localStorage.getItem('token');
 
-                if (!userData || !userData.id) {
-                    console.error('AuthProvider: Invalid user data in localStorage');
-                    localStorage.removeItem('user');
-                    localStorage.removeItem('token');
-                    return;
-                }
-
-                // Set default Authorization header for all requests
-                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-                // Update auth state
-                setUser(userData);
-                setIsAuthenticated(true);
-
-                console.log('AuthProvider: Successfully restored auth state:', {
-                    userId: userData.id,
-                    isAuthenticated: true
+                console.log('AuthProvider: Checking stored credentials:', {
+                    hasStoredUser: !!storedUser,
+                    hasToken: !!token
                 });
+
+                if (storedUser && token) {
+                    const userData = JSON.parse(storedUser);
+                    if (userData && userData.id) {
+                        setUser(userData);
+                        setIsAuthenticated(true);
+                        apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+                        console.log('AuthProvider: Restored auth state:', {
+                            userId: userData.id,
+                            role: userData.role,
+                            isAuthenticated: true
+                        });
+                    } else {
+                        clearAuthState();
+                    }
+                }
             } catch (error) {
-                console.error('AuthProvider: Error restoring auth state:', error);
-                localStorage.removeItem('user');
-                localStorage.removeItem('token');
-                setUser(null);
-                setIsAuthenticated(false);
+                console.error('AuthProvider: Error initializing auth:', error);
+                clearAuthState();
+            } finally {
+                setIsLoading(false);
             }
-        }
+        };
+
+        initializeAuth();
     }, []);
+
+    const clearAuthState = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        delete apiClient.defaults.headers.common['Authorization'];
+        setUser(null);
+        setIsAuthenticated(false);
+    };
 
     const login = async (email, password) => {
         try {
             console.log('AuthProvider: Attempting login for:', email);
-            const response = await axios.post('http://localhost:8080/api/auth/login', {
+
+            const response = await apiClient.post(`${API_CONFIG.AUTH_SERVICE}/login`, {
                 email,
                 motDePasse: password
             });
 
-            console.log('AuthProvider: Login response:', response.data);
             const { token, role, name, id } = response.data;
 
-            if (!id) {
-                throw new Error('User ID missing from login response');
+            if (!token || !id) {
+                throw new Error('Invalid response from server');
             }
 
-            // Store auth data
-            const userData = {
-                id,
-                email,
-                role,
-                name
-            };
+            // Create user data object
+            const userData = { id, email, role, name };
 
+            // Store auth data
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(userData));
 
-            // Set default Authorization header for all requests
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            // Update axios default headers
+            apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-            // Update auth state
+            // Update state
             setUser(userData);
             setIsAuthenticated(true);
 
             console.log('AuthProvider: Login successful:', {
                 userId: id,
+                role,
                 isAuthenticated: true
             });
 
             return response.data;
         } catch (error) {
             console.error('AuthProvider: Login error:', error);
-            // Clear any invalid data
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            delete axios.defaults.headers.common['Authorization'];
-            setUser(null);
-            setIsAuthenticated(false);
-            throw error;
+            clearAuthState();
+            throw error.response?.data || error;
         }
     };
 
     const logout = () => {
         console.log('AuthProvider: Logging out');
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        delete axios.defaults.headers.common['Authorization'];
-        setUser(null);
-        setIsAuthenticated(false);
-        navigate('/login');
+        clearAuthState();
+        window.location.href = '/login';
     };
 
-    const value = {
-        user,
-        isAuthenticated,
-        login,
-        logout
-    };
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
-        <AuthContext.Provider value={value}>
+        <AuthContext.Provider value={{ user, isAuthenticated, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

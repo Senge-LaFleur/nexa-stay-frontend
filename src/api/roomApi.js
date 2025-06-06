@@ -1,4 +1,4 @@
-import apiClient from './apiClient';
+import { roomClient } from './apiClient';
 import { API_CONFIG } from '../config/apiConfig';
 
 export const createRoom = async (roomData) => {
@@ -24,7 +24,7 @@ export const createRoom = async (roomData) => {
             console.log(`${key}: ${value}`);
         }
 
-        const response = await apiClient.post(`${API_CONFIG.ROOM_SERVICE}/add`, formData, {
+        const response = await roomClient.post('/api/rooms', formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -41,7 +41,7 @@ export const createRoom = async (roomData) => {
 
 export const getAllRooms = async () => {
     try {
-        const response = await apiClient.get(`${API_CONFIG.ROOM_SERVICE}/all`);
+        const response = await roomClient.get('/api/rooms');
         return response.data;
     } catch (error) {
         throw error.response?.data || { message: 'Error fetching rooms' };
@@ -50,7 +50,7 @@ export const getAllRooms = async () => {
 
 export const getRoomById = async (id) => {
     try {
-        const response = await apiClient.get(`${API_CONFIG.ROOM_SERVICE}/room/${id}/room`);
+        const response = await roomClient.get(`/api/rooms/${id}`);
         return response.data;
     } catch (error) {
         throw error.response?.data || { message: 'Error fetching room' };
@@ -59,7 +59,7 @@ export const getRoomById = async (id) => {
 
 export const updateRoom = async (id, roomData) => {
     try {
-        const response = await apiClient.put(`${API_CONFIG.ROOM_SERVICE}/room/${id}/update`, roomData);
+        const response = await roomClient.put(`/api/rooms/${id}`, roomData);
         return response.data;
     } catch (error) {
         throw error.response?.data || { message: 'Error updating room' };
@@ -68,7 +68,7 @@ export const updateRoom = async (id, roomData) => {
 
 export const deleteRoom = async (id) => {
     try {
-        const response = await apiClient.delete(`${API_CONFIG.ROOM_SERVICE}/room/${id}/delete`);
+        const response = await roomClient.delete(`/api/rooms/${id}`);
         return response.data;
     } catch (error) {
         console.error('Error deleting room:', error);
@@ -78,7 +78,7 @@ export const deleteRoom = async (id) => {
 
 export const getRoomsByType = async (type) => {
     try {
-        const response = await apiClient.get(`${API_CONFIG.ROOM_SERVICE}/room/type/${type}`);
+        const response = await roomClient.get(`/api/rooms/type/${type}`);
         return response.data;
     } catch (error) {
         throw error.response?.data || { message: 'Error fetching rooms by type' };
@@ -87,7 +87,7 @@ export const getRoomsByType = async (type) => {
 
 export const getRoomsByPrice = async (price) => {
     try {
-        const response = await apiClient.get(`${API_CONFIG.ROOM_SERVICE}/room/price/${price}`);
+        const response = await roomClient.get(`/api/rooms/price/${price}`);
         return response.data;
     } catch (error) {
         throw error.response?.data || { message: 'Error fetching rooms by price' };
@@ -96,7 +96,7 @@ export const getRoomsByPrice = async (price) => {
 
 export const getRoomsByCapacity = async (capacity) => {
     try {
-        const response = await apiClient.get(`${API_CONFIG.ROOM_SERVICE}/room/capacity/${capacity}`);
+        const response = await roomClient.get(`/api/rooms/capacity/${capacity}`);
         return response.data;
     } catch (error) {
         throw error.response?.data || { message: 'Error fetching rooms by capacity' };
@@ -104,6 +104,6 @@ export const getRoomsByCapacity = async (capacity) => {
 };
 
 export const searchRooms = async (searchParams) => {
-    const response = await apiClient.get(`${API_CONFIG.ROOM_SERVICE}/search`, { params: searchParams });
+    const response = await roomClient.get('/api/rooms/search', { params: searchParams });
     return response.data;
 }; 

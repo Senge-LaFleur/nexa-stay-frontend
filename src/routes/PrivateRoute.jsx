@@ -1,24 +1,26 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const PrivateRoute = ({ element, requiredRole = null }) => {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const { user, isAuthenticated } = useAuth();
+    const location = useLocation();
+
+    // If not authenticated, redirect to login with return path
+    if (!isAuthenticated || !user) {
+        return <Navigate to="/login" state={{ from: location.pathname }} replace />;
+    }
 
     // If user is ADMIN, allow access to all routes
-    if (user?.role === 'ADMIN') {
+    if (user.role === 'ADMIN') {
         return element;
     }
 
-    // If requiredRole is specified and user doesn't have it, redirect to login
-    if (requiredRole && user?.role !== requiredRole) {
-        return <Navigate to="/login" replace />;
+    // If route requires ADMIN role and user is not ADMIN, redirect to rooms
+    if (requiredRole === 'ADMIN' && user.role !== 'ADMIN') {
+        return <Navigate to="/rooms" replace />;
     }
 
-    // If no user is logged in, redirect to login
-    if (!user) {
-        return <Navigate to="/login" replace />;
-    }
-
-    // Otherwise, render the protected component
+    // For client routes or routes without specific role requirements
     return element;
 };
 

@@ -25,18 +25,22 @@ function App() {
           <Route path="/" element={<HomeLayout />}>
             <Route index element={<Home />} />
           </Route>
-          <Route path="/rooms" element={<Rooms />} />
+          <Route path="/rooms" element={<PrivateRoute element={<Rooms />} />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/logout" element={<Logout />} />
 
-          <Route path="/roomsTable" element={<PrivateRoute element={<RoomsTable />} requiredRole="ADMIN" />} />
-          <Route path="/payment" element={<PrivateRoute element={<Payment />} />} />
+          {/* Admin Routes */}
           <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} requiredRole="ADMIN" />} />
+          <Route path="/roomsTable" element={<PrivateRoute element={<RoomsTable />} requiredRole="ADMIN" />} />
           <Route path="/client" element={<PrivateRoute element={<Client />} requiredRole="ADMIN" />} />
-          <Route path="/reservation" element={<PrivateRoute element={<Reservation />} />} />
           <Route path="/payments" element={<PrivateRoute element={<Payments />} requiredRole="ADMIN" />} />
           <Route path="/reviews" element={<PrivateRoute element={<Reviews />} requiredRole="ADMIN" />} />
+          <Route path="/reservation" element={<PrivateRoute element={<Reservation />} requiredRole="ADMIN" />} />
+
+          {/* Client Routes */}
+          <Route path="/payment" element={<PrivateRoute element={<Payment />} />} />
+          
         </Routes>
       </div>
     </AuthProvider>

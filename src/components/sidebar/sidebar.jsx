@@ -83,7 +83,7 @@ function Sidebar({ isExpanded, toggleSidebar, isMobile }) {
                             )}
                             {isAdmin && (
                                 <li className="side-list">
-                                    <NavLink to="/inbox" className={({ isActive }) => isActive ? 'side-link active' : 'side-link'}>
+                                    <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'side-link active' : 'side-link'}>
                                         <span><FontAwesomeIcon icon={['fas', 'fa-envelope']} /></span>
                                         {isExpanded && <h3>Inbox</h3>}
                                         {isExpanded && <p className="message-count" id="message-count">99+</p>}
@@ -91,7 +91,7 @@ function Sidebar({ isExpanded, toggleSidebar, isMobile }) {
                                 </li>
                             )}
                             <li className="side-list bottom" id="settings">
-                                <NavLink to="/settings" className={({ isActive }) => isActive ? 'side-link active' : 'side-link'}>
+                                <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'side-link active' : 'side-link'}>
                                     <span><FontAwesomeIcon icon={['fas', 'fa-cog']} /></span>
                                     {isExpanded && <h3>Settings</h3>}
                                 </NavLink>
