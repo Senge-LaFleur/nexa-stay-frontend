@@ -3,14 +3,19 @@ import { API_CONFIG } from '../config/apiConfig';
 
 export const submitReview = async (reviewData) => {
     try {
-        // Log the size of the photo data
-        const photoSize = reviewData.photo ? Math.round(reviewData.photo.length / 1024) : 0;
-        console.log('Attempting to submit review:', {
+        console.log('Review API: Starting review submission:', {
             userId: reviewData.userId,
             roomId: reviewData.roomId,
             rating: reviewData.rating,
-            commentLength: reviewData.comment?.length || 0,
-            photoSize: `${photoSize}KB`
+            hasComment: !!reviewData.comment,
+            hasPhoto: !!reviewData.photo,
+            photoSize: reviewData.photo?.length || 0
+        });
+
+        const token = localStorage.getItem('token');
+        console.log('Review API: Using token:', {
+            hasToken: !!token,
+            tokenPreview: token ? `${token.substring(0, 10)}...` : null
         });
 
         // Validate the data before sending
@@ -24,38 +29,35 @@ export const submitReview = async (reviewData) => {
             throw new Error('Missing required fields');
         }
 
-        // Send the request
-        const response = await apiClient.post(API_CONFIG.REVIEW_SERVICE, {
-            userId: reviewData.userId,
-            roomId: reviewData.roomId,
-            rating: reviewData.rating,
-            comment: reviewData.comment || '',
-            photo: reviewData.photo
-        });
+        if (!token) {
+            console.error('No authentication token found');
+            throw new Error('Authentication required. Please log in again.');
+        }
 
-        console.log('Review submission successful:', {
-            id: response.data.id,
+        // Send the request
+        const response = await apiClient.post(API_CONFIG.REVIEW_SERVICE, reviewData);
+
+        console.log('Review API: Submission successful:', {
             status: response.status,
-            statusText: response.statusText
+            statusText: response.statusText,
+            data: response.data
         });
 
         return response.data;
     } catch (error) {
-        console.error('Review submission failed:', {
+        console.error('Review API: Submission failed:', {
             status: error.response?.status,
             statusText: error.response?.statusText,
             data: error.response?.data,
-            headers: error.response?.headers,
-            config: {
-                url: error.config?.url,
-                method: error.config?.method,
-                headers: error.config?.headers
-            },
-            message: error.message
+            message: error.message,
+            stack: error.stack
         });
 
         // Handle specific error cases
         if (error.response?.status === 401) {
+            // Clear invalid auth state
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
             throw new Error('Authentication required. Please log in again.');
         } else if (error.response?.status === 409) {
             throw new Error('You have already reviewed this room.');
@@ -71,17 +73,19 @@ export const submitReview = async (reviewData) => {
 
 export const getLatestReviews = async () => {
     try {
-        console.log('Fetching latest reviews');
+        console.log('Review API: Fetching latest reviews');
         const response = await apiClient.get(`${API_CONFIG.REVIEW_SERVICE}/latest`);
-        console.log('Latest reviews fetched successfully:', response.data);
+        console.log('Review API: Fetch successful:', {
+            status: response.status,
+            reviewCount: response.data?.length || 0
+        });
         return response.data;
     } catch (error) {
-        console.error('Error fetching latest reviews:', {
+        console.error('Review API: Fetch failed:', {
             status: error.response?.status,
-            statusText: error.response?.statusText,
-            data: error.response?.data
+            message: error.message
         });
-        throw error.response?.data || { message: 'Error fetching reviews' };
+        throw error;
     }
 };
 

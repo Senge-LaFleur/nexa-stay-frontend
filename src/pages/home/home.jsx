@@ -35,14 +35,56 @@ function Home() {
     useEffect(() => {
         fetchReviews();
 
-        // Check for pending review in sessionStorage after login
-        const pendingReview = sessionStorage.getItem('pendingReview');
-        if (pendingReview && isAuthenticated && user) {
-            const reviewData = JSON.parse(pendingReview);
-            submitPendingReview(reviewData);
-            sessionStorage.removeItem('pendingReview');
-        }
-    }, [isAuthenticated, user]);
+        // Check for pending review when component mounts or auth state changes
+        const checkPendingReview = async () => {
+            const pendingReview = sessionStorage.getItem('pendingReview');
+            const shouldProcessReview = location.state?.processPendingReview;
+
+            console.log('Checking for pending review:', {
+                isAuthenticated,
+                hasUser: !!user,
+                userId: user?.id,
+                hasPendingReview: !!pendingReview,
+                shouldProcessReview,
+                locationState: location.state
+            });
+
+            if (pendingReview && isAuthenticated && user?.id && shouldProcessReview) {
+                try {
+                    const reviewData = JSON.parse(pendingReview);
+                    console.log('Found pending review to process:', reviewData);
+
+                    // Clear the pending review before processing to prevent loops
+                    sessionStorage.removeItem('pendingReview');
+
+                    // Submit the review
+                    await submitPendingReview({
+                        ...reviewData,
+                        userId: user.id
+                    });
+
+                    // Clear the location state
+                    window.history.replaceState({}, document.title);
+                } catch (error) {
+                    console.error('Error processing pending review:', error);
+                    if (error.response?.status === 401) {
+                        // If unauthorized, save review data again
+                        sessionStorage.setItem('pendingReview', pendingReview);
+                        navigate('/login', {
+                            state: {
+                                from: '/',
+                                scrollToReviews: true
+                            }
+                        });
+                    } else {
+                        alert('Error submitting review. Please try again.');
+                    }
+                }
+            }
+        };
+
+        checkPendingReview();
+    }, [isAuthenticated, user, location.state?.processPendingReview]);
 
     const fetchReviews = async () => {
         try {
@@ -61,17 +103,14 @@ function Home() {
     const submitPendingReview = async (reviewData) => {
         try {
             setIsLoading(true);
-            console.log('Submitting pending review with user:', user); // Debug log
-            console.log('Auth context in pending review:', { isAuthenticated, user }); // Debug log
+            console.log('Submitting pending review:', {
+                reviewData,
+                user,
+                isAuthenticated
+            });
 
-            const completeReviewData = {
-                ...reviewData,
-                userId: user.id
-            };
-            console.log('Complete review data:', completeReviewData); // Debug log
-
-            const response = await submitReview(completeReviewData);
-            console.log('Pending review submitted successfully:', response);
+            const response = await submitReview(reviewData);
+            console.log('Review submission successful:', response);
 
             // Reset form
             setRating(0);
@@ -83,15 +122,15 @@ function Home() {
 
             // Refresh reviews
             await fetchReviews();
+
+            // Scroll to reviews section
+            const reviewSection = document.querySelector('.review');
+            if (reviewSection) {
+                reviewSection.scrollIntoView({ behavior: 'smooth' });
+            }
         } catch (error) {
             console.error('Error submitting pending review:', error);
-            console.error('Error details:', { // Debug log
-                response: error.response,
-                message: error.message,
-                user: user,
-                isAuthenticated: isAuthenticated
-            });
-            alert('Error submitting review. Please try again.');
+            throw error;
         } finally {
             setIsLoading(false);
         }
@@ -100,7 +139,15 @@ function Home() {
     const handleReviewSubmit = async (e) => {
         e.preventDefault();
 
-        console.log('Auth context at review submission:', { isAuthenticated, user });
+        console.log('Starting review submission process:', {
+            isAuthenticated,
+            user,
+            hasToken: !!localStorage.getItem('token'),
+            token: localStorage.getItem('token'),
+            rating,
+            hasPhoto: !!photo,
+            photoSize: photo ? photo.length : 0
+        });
 
         if (!isAuthenticated || !user || !user.id) {
             console.log('User not properly authenticated:', { isAuthenticated, user });
@@ -112,6 +159,7 @@ function Home() {
                 photo
             };
             sessionStorage.setItem('pendingReview', JSON.stringify(reviewData));
+            console.log('Saved review data to sessionStorage:', reviewData);
 
             alert('Please log in to submit a review');
             navigate('/login', {
@@ -135,10 +183,13 @@ function Home() {
 
         try {
             setIsLoading(true);
-            console.log('User data before submission:', {
+            console.log('Preparing to submit review with data:', {
                 userId: user.id,
                 userEmail: user.email,
-                isAuthenticated
+                isAuthenticated,
+                rating,
+                commentLength: comment?.length || 0,
+                photoSize: photo.length
             });
 
             const reviewData = {
@@ -149,9 +200,9 @@ function Home() {
                 photo
             };
 
-            console.log('Review data before submission:', {
-                ...reviewData,
-                photoSize: photo.length
+            console.log('Making API request with headers:', {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
             });
 
             await submitReview(reviewData);
@@ -173,17 +224,21 @@ function Home() {
                 status: error.response?.status,
                 data: error.response?.data,
                 userId: user?.id,
-                isAuthenticated
+                isAuthenticated,
+                errorMessage: error.message
             });
 
             if (error.response?.status === 401) {
                 // Save review data and clear auth state
-                sessionStorage.setItem('pendingReview', JSON.stringify({
+                const reviewData = {
                     roomId: 1,
                     rating,
                     comment,
                     photo
-                }));
+                };
+                sessionStorage.setItem('pendingReview', JSON.stringify(reviewData));
+                console.log('Saved review data before logout:', reviewData);
+
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
                 alert('Please log in again to submit your review.');

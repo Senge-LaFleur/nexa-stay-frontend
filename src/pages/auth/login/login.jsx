@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { login } from '../../../api/authApi.js';
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
+import { useAuth } from '../../../context/AuthContext';
 import './login.css'
 
 const Login = () => {
@@ -11,6 +11,7 @@ const Login = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
+    const { login } = useAuth();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -18,40 +19,51 @@ const Login = () => {
             const data = await login(email, password);
             console.log('Login response:', data);
 
-            if (data.token) {
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('user', JSON.stringify({
-                    id: data.id,
-                    role: data.role,
-                    email: data.email
-                }));
+            // Check for pending review before navigation
+            const pendingReview = sessionStorage.getItem('pendingReview');
+            console.log('Checking for pending review after login:', {
+                hasPendingReview: !!pendingReview,
+                pendingReviewData: pendingReview ? JSON.parse(pendingReview) : null
+            });
 
-                // Check for pending booking
-                const pendingBooking = localStorage.getItem('pendingBooking');
-                if (pendingBooking) {
-                    // Remove the pending booking from localStorage
-                    localStorage.removeItem('pendingBooking');
-                    // Redirect back to rooms page to complete the booking
-                    navigate('/rooms');
-                    return;
-                }
+            // Small delay to ensure state updates are processed
+            await new Promise(resolve => setTimeout(resolve, 500));
 
-                // Get the return path from state
-                const returnPath = location.state?.from;
-
-                // If user is ADMIN and there's no specific return path, go to dashboard
-                if (data.role === 'ADMIN' && !returnPath) {
-                    navigate('/dashboard');
-                } else if (returnPath) {
-                    // If there's a return path, use it
-                    navigate(returnPath);
-                } else {
-                    // Default to home page for regular users
-                    navigate('/');
-                }
-
-                alert('Login successful!');
+            if (pendingReview) {
+                console.log('Found pending review, navigating to home with processPendingReview flag');
+                // Navigate back to home with a flag to process the review
+                navigate('/', {
+                    state: {
+                        processPendingReview: true,
+                        scrollToReviews: true
+                    },
+                    replace: true
+                });
+                return;
             }
+
+            // Get the return path from state
+            const returnPath = location.state?.from;
+            console.log('Navigation state:', {
+                returnPath,
+                locationState: location.state
+            });
+
+            // Handle navigation based on role and return path
+            if (data.role === 'ADMIN' && !returnPath) {
+                navigate('/dashboard', { replace: true });
+            } else if (returnPath) {
+                navigate(returnPath, {
+                    state: {
+                        scrollToReviews: location.state?.scrollToReviews
+                    },
+                    replace: true
+                });
+            } else {
+                navigate('/', { replace: true });
+            }
+
+            alert('Login successful!');
         } catch (err) {
             console.error('Login error:', err);
             setError(err.message || 'Error during login');

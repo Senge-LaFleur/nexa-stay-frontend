@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
         const storedUser = localStorage.getItem('user');
         const token = localStorage.getItem('token');
 
-        console.log('Initial localStorage check:', {
+        console.log('AuthProvider: Checking stored credentials:', {
             hasStoredUser: !!storedUser,
             hasToken: !!token
         });
@@ -30,69 +30,81 @@ export const AuthProvider = ({ children }) => {
         if (storedUser && token) {
             try {
                 const userData = JSON.parse(storedUser);
-                console.log('Parsed user data from localStorage:', userData);
+                console.log('AuthProvider: Parsed stored user data:', userData);
 
                 if (!userData || !userData.id) {
-                    console.error('Invalid user data in localStorage');
+                    console.error('AuthProvider: Invalid user data in localStorage');
                     localStorage.removeItem('user');
                     localStorage.removeItem('token');
                     return;
                 }
 
-                setUser(userData);
-                setIsAuthenticated(true);
                 // Set default Authorization header for all requests
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-                console.log('Successfully restored auth state:', {
+
+                // Update auth state
+                setUser(userData);
+                setIsAuthenticated(true);
+
+                console.log('AuthProvider: Successfully restored auth state:', {
                     userId: userData.id,
                     isAuthenticated: true
                 });
             } catch (error) {
-                console.error('Error parsing stored user data:', error);
+                console.error('AuthProvider: Error restoring auth state:', error);
                 localStorage.removeItem('user');
                 localStorage.removeItem('token');
+                setUser(null);
+                setIsAuthenticated(false);
             }
         }
     }, []);
 
     const login = async (email, password) => {
         try {
-            console.log('Attempting login for:', email);
+            console.log('AuthProvider: Attempting login for:', email);
             const response = await axios.post('http://localhost:8080/api/auth/login', {
                 email,
                 motDePasse: password
             });
 
-            console.log('Login response:', response.data);
+            console.log('AuthProvider: Login response:', response.data);
             const { token, role, name, id } = response.data;
 
             if (!id) {
                 throw new Error('User ID missing from login response');
             }
 
-            // Store both token and user data
-            localStorage.setItem('token', token);
+            // Store auth data
             const userData = {
                 id,
                 email,
                 role,
                 name
             };
-            console.log('Storing user data:', userData);
+
+            localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(userData));
 
             // Set default Authorization header for all requests
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
+            // Update auth state
             setUser(userData);
             setIsAuthenticated(true);
 
+            console.log('AuthProvider: Login successful:', {
+                userId: id,
+                isAuthenticated: true
+            });
+
             return response.data;
         } catch (error) {
-            console.error('Login error:', error);
+            console.error('AuthProvider: Login error:', error);
             // Clear any invalid data
             localStorage.removeItem('token');
             localStorage.removeItem('user');
+            delete axios.defaults.headers.common['Authorization'];
             setUser(null);
             setIsAuthenticated(false);
             throw error;
@@ -100,6 +112,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = () => {
+        console.log('AuthProvider: Logging out');
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         delete axios.defaults.headers.common['Authorization'];
