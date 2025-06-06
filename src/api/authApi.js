@@ -1,9 +1,9 @@
-import apiClient from './apiClient';
+import { authClient } from './apiClient';
 import { API_CONFIG } from '../config/apiConfig';
 
 export const login = async (email, motDePasse) => {
     try {
-        const response = await apiClient.post(`${API_CONFIG.AUTH_SERVICE}/login`, {
+        const response = await authClient.post(`${API_CONFIG.AUTH_SERVICE}/login`, {
             email,
             motDePasse
         });
@@ -38,7 +38,7 @@ export const register = async (userData) => {
             role: userData.role || 'CLIENT'
         };
 
-        const response = await apiClient.post(`${API_CONFIG.AUTH_SERVICE}/register`, registerData);
+        const response = await authClient.post(`${API_CONFIG.AUTH_SERVICE}/register`, registerData);
 
         const { token, role, id, name } = response.data;
 
@@ -65,7 +65,7 @@ export const logout = () => {
 
 export const checkAuthStatus = async () => {
     try {
-        const response = await apiClient.get(`${API_CONFIG.AUTH_SERVICE}/status`);
+        const response = await authClient.get(`${API_CONFIG.AUTH_SERVICE}/status`);
         return response.data;
     } catch (error) {
         if (error.response?.status === 401) {

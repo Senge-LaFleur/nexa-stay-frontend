@@ -11,7 +11,6 @@ export const API_CONFIG = {
 export const SERVICE_URLS = {
     AUTH_SERVICE: 'http://localhost:8080',
     ROOM_SERVICE: 'http://localhost:8085',
-    // MEDIA_SERVICE: 'http://localhost:8085'
 };
 
 // Common headers

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import apiClient from '../api/apiClient';
+import { authClient } from '../api/apiClient';
 import { API_CONFIG } from '../config/apiConfig';
 
 export const AuthContext = createContext();
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
                     if (userData && userData.id) {
                         setUser(userData);
                         setIsAuthenticated(true);
-                        apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                        authClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
                         console.log('AuthProvider: Restored auth state:', {
                             userId: userData.id,
@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
     const clearAuthState = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        delete apiClient.defaults.headers.common['Authorization'];
+        delete authClient.defaults.headers.common['Authorization'];
         setUser(null);
         setIsAuthenticated(false);
     };
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }) => {
         try {
             console.log('AuthProvider: Attempting login for:', email);
 
-            const response = await apiClient.post(`${API_CONFIG.AUTH_SERVICE}/login`, {
+            const response = await authClient.post(`${API_CONFIG.AUTH_SERVICE}/login`, {
                 email,
                 motDePasse: password
             });
@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem('user', JSON.stringify(userData));
 
             // Update axios default headers
-            apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            authClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
             // Update state
             setUser(userData);
